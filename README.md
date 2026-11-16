@@ -1,7 +1,6 @@
 <<<<<<< HEAD
 # Kalkulator Data Deskriptif Kelompok 2 - Aplikasi Web Statistik Deskriptif Modern
 =======
-# Statistica Prototype Kelompok 2 - Aplikasi Web Statistik Deskriptif Modern
 # Anggota  : William Christian Kurniawan, M. Sahki Wisham Fauzan, Nurul Arip Mauludin, Melani Nurul Fitriani, Nenny Maryani
 
 >>>>>>> 744a04464f1e44a692948092d2042fbb7d006f41
