@@ -1,4 +1,4 @@
-# Stat Prototype Group 2 - Aplikasi Web Statistik Deskriptif Modern
+# Kalkulator Data Deskriptif Kelompok 2 - Aplikasi Web Statistik Deskriptif Modern
 
 Aplikasi web interaktif, responsif, dan siap pakai untuk pengolahan data statistik deskriptif lengkap dengan visualisasi grafis menggunakan **HTML5**, **Tailwind CSS (CDN)**, **JavaScript (ES6+)**, **Plotly.js (CDN)**, dan **PapaParse (CDN)**.
 

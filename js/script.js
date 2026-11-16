@@ -1,5 +1,5 @@
 /**
- * Stat Prototype Group 2 - Aplikasi Web Pengolahan Data Statistik Deskriptif
+ * Kalkulator Data Deskriptif Kelompok 2 - Aplikasi Web Pengolahan Data Statistik Deskriptif
  * Tema Gelap (Dark Mode) yang Bersih & Ramah Pengguna
  * 
  * Modul ini mencakup:
@@ -1142,7 +1142,7 @@ function copySummaryToClipboard() {
 
   const s = AppState.stats;
   const report = `=========================================
-LAPORAN STATISTIK DESKRIPTIF (Stat Prototype Group 2)
+LAPORAN STATISTIK DESKRIPTIF (Kalkulator Data Deskriptif Kelompok 2)
 =========================================
 Jumlah Data (n)              : ${s.n}
 Total Nilai (Σx)             : ${formatNum(s.sum)}
