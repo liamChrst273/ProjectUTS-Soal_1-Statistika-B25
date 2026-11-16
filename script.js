@@ -1,5 +1,5 @@
 /**
- * StatMaster Pro - Aplikasi Web Pengolahan Data Statistik Deskriptif
+ * Stat Prototype Group 2 - Aplikasi Web Pengolahan Data Statistik Deskriptif
  * Dibangun dengan HTML5, Tailwind CSS, Vanilla JavaScript (ES6+), Plotly.js, dan PapaParse.
  * 
  * Modul ini mencakup:
@@ -479,7 +479,7 @@ const PLOTLY_CONFIG = {
   modeBarButtonsToRemove: ['lasso2d', 'select2d', 'hoverClosestCartesian', 'hoverCompareCartesian'],
   toImageButtonOptions: {
     format: 'png',
-    filename: 'statmaster_chart',
+    filename: 'stat_prototype_group2_chart',
     height: 600,
     width: 900,
     scale: 2
@@ -1224,7 +1224,7 @@ function copySummaryToClipboard() {
 
   const s = AppState.stats;
   const report = `=========================================
-LAPORAN STATISTIK DESKRIPTIF (StatMaster Pro)
+LAPORAN STATISTIK DESKRIPTIF (Stat Prototype Group 2)
 =========================================
 Jumlah Data (n)              : ${s.n}
 Total Nilai (Σx)             : ${formatNum(s.sum)}
