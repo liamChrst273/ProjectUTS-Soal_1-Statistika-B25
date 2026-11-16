@@ -1,4 +1,6 @@
-# Stat Prototype Group 2 - Aplikasi Web Statistik Deskriptif Modern
+# Statistica Prototype Kelompok 2 - Aplikasi Web Statistik Deskriptif Modern
+# Anggota  : William Christian Kurniawan, M. Sahki Wisham Fauzan, Nurul Arip Mauludin, Melani Nurul Fitriani, Nenny Maryani
+
 
 Aplikasi web interaktif, responsif, dan siap pakai untuk pengolahan data statistik deskriptif lengkap dengan visualisasi grafis menggunakan **HTML5**, **Tailwind CSS (CDN)**, **JavaScript (ES6+)**, **Plotly.js (CDN)**, dan **PapaParse (CDN)**.
 
