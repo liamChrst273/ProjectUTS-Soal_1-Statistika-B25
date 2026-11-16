@@ -1249,6 +1249,34 @@ function exportSummaryCsv() {
   document.body.removeChild(link);
 }
 
+/**
+ * Cetak atau simpan PDF khusus hasil parameter statistik
+ */
+function printReport() {
+  if (!AppState.stats) {
+    showAlert('Belum ada data hasil analisis yang dapat dicetak. Silakan analisis data terlebih dahulu.', 'warning');
+    return;
+  }
+
+  const timestampEl = document.getElementById('print-timestamp');
+  if (timestampEl) {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    const formattedTime = now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    timestampEl.textContent = `Dicetak pada: ${formattedDate}, ${formattedTime} WIB`;
+  }
+
+  window.print();
+}
+
 // ==========================================
 // 13. INISIALISASI PADA SAAT HALAMAN DIBUKA
 // ==========================================
