@@ -1,0 +1,105 @@
+/* Custom Styles & Utilities for StatMaster Web App */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0f172a;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+.font-mono-numbers {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* Glassmorphism Card Style */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.6), 0 0 15px -3px rgba(99, 102, 241, 0.15);
+}
+
+/* Subtle glow effects */
+.glow-indigo {
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* Plotly overrides for dark theme integration */
+.js-plotly-plot .plotly .modebar {
+  background: transparent !important;
+}
+.js-plotly-plot .plotly .modebar-btn path {
+  fill: #94a3b8 !important;
+}
+.js-plotly-plot .plotly .modebar-btn:hover path {
+  fill: #6366f1 !important;
+}
+
+/* Pulse animation for active badges */
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-subtle-pulse {
+  animation: subtle-pulse 2s infinite ease-in-out;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .glass-panel, .glass-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    color: #0f172a !important;
+  }
+  .text-slate-400, .text-slate-300 {
+    color: #475569 !important;
+  }
+  .text-white {
+    color: #0f172a !important;
+  }
+}

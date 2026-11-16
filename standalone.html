@@ -1,0 +1,2099 @@
+﻿<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StatMaster Pro - Aplikasi Web Statistik Deskriptif Modern</title>
+  <meta name="description" content="Aplikasi pengolahan data statistik deskriptif modern dengan 14 parameter statistik lengkap, visualisasi Plotly.js, dan parser CSV.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Plotly.js CDN -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  <!-- PapaParse CDN untuk parsing CSV otomatis -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Custom CSS -->
+  <style>
+/* Custom Styles & Utilities for StatMaster Web App */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0f172a;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+.font-mono-numbers {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* Glassmorphism Card Style */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.6), 0 0 15px -3px rgba(99, 102, 241, 0.15);
+}
+
+/* Subtle glow effects */
+.glow-indigo {
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* Plotly overrides for dark theme integration */
+.js-plotly-plot .plotly .modebar {
+  background: transparent !important;
+}
+.js-plotly-plot .plotly .modebar-btn path {
+  fill: #94a3b8 !important;
+}
+.js-plotly-plot .plotly .modebar-btn:hover path {
+  fill: #6366f1 !important;
+}
+
+/* Pulse animation for active badges */
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-subtle-pulse {
+  animation: subtle-pulse 2s infinite ease-in-out;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .glass-panel, .glass-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    color: #0f172a !important;
+  }
+  .text-slate-400, .text-slate-300 {
+    color: #475569 !important;
+  }
+  .text-white {
+    color: #0f172a !important;
+  }
+}
+
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- HEADER APLIKASI -->
+  <!-- ============================================================== -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+              StatMaster <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">Pro v2.0</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400">Pengolahan Data Statistik Deskriptif & Visualisasi Interaktif</p>
+        </div>
+      </div>
+
+      <!-- Action Navigasi & Modal Bantuan -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openFormulaModal()" class="px-3 py-1.5 text-xs font-medium rounded-lg text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          <span class="hidden sm:inline">Panduan Rumus</span>
+        </button>
+
+        <a href="sample_mahasiswa.csv" download="sample_mahasiswa.csv" class="px-3 py-1.5 text-xs font-medium rounded-lg text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <span class="hidden sm:inline">Unduh Contoh CSV</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- MAIN CONTENT CONTAINER -->
+  <!-- ============================================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Notification Alert Banner -->
+    <div id="alert-container" class="hidden transition-all duration-300"></div>
+
+    <!-- ============================================================== -->
+    <!-- BAGIAN 1: INPUT DATA FLEKSIBEL (MANUAL & CSV) -->
+    <!-- ============================================================== -->
+    <section class="glass-panel rounded-2xl p-6 sm:p-7 shadow-xl border border-slate-800">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-800 gap-4">
+        <div>
+          <h2 class="text-base font-semibold text-white flex items-center gap-2">
+            <span class="flex h-2.5 w-2.5 rounded-full bg-indigo-500 animate-subtle-pulse"></span>
+            1. Sumber & Masukan Data (Input)
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Pilih metode masukan data: input teks manual atau upload berkas CSV multi-kolom.</p>
+        </div>
+
+        <!-- Segmented Tab Switcher -->
+        <div class="flex p-1 bg-slate-900/90 rounded-xl border border-slate-800 self-start md:self-auto">
+          <button id="tab-btn-manual" onclick="setInputTab('manual')" class="flex-1 py-2 px-4 rounded-lg font-semibold text-xs md:text-sm bg-indigo-600 text-white shadow-md shadow-indigo-600/30 flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Input Manual
+          </button>
+          <button id="tab-btn-csv" onclick="setInputTab('csv')" class="flex-1 py-2 px-4 rounded-lg font-medium text-xs md:text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            Upload CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Konten Tab -->
+      <div class="mt-6">
+        <!-- TAB A: INPUT MANUAL -->
+        <div id="panel-input-manual" class="space-y-4">
+          <div class="flex items-center justify-between">
+            <label for="manual-data-input" class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              Deret Angka Numerik
+            </label>
+            <span id="manual-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-indigo-400 border border-slate-700 font-mono">
+              0 angka terdeteksi
+            </span>
+          </div>
+
+          <div class="relative">
+            <textarea id="manual-data-input" rows="4" 
+              class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+              placeholder="Contoh: 15, 48, 52, 55, 58, 60, 61, 62, 63, 65, 66, 68, 70, 72, 75, 78, 80, 82, 85, 90, 115, 120"></textarea>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <span class="font-medium text-slate-300">Pemisah yang didukung:</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Koma (,)</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Spasi (&nbsp;)</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Titik Koma (;)</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Baris Baru (\n)</span>
+            <span class="text-slate-500 ml-auto">Gunakan tanda titik (.) untuk pecahan desimal</span>
+          </div>
+        </div>
+
+        <!-- TAB B: UPLOAD FILE CSV -->
+        <div id="panel-input-csv" class="hidden space-y-4">
+          <!-- Dropzone -->
+          <div id="csv-dropzone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500/70 bg-slate-900/50 hover:bg-indigo-950/20 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all group">
+            <input type="file" id="csv-file-input" accept=".csv,text/csv" class="hidden">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-800 group-hover:bg-indigo-600/30 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-200">Klik untuk memilih file atau seret file CSV ke sini</p>
+            <p class="text-xs text-slate-500 mt-1">Mendukung file .csv dengan header kolom otomatis diparsing via PapaParse</p>
+          </div>
+
+          <!-- File Info Pill -->
+          <div id="csv-file-info" class="hidden flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="csv-file-name" class="font-semibold text-slate-200 font-mono">data.csv</span>
+              <span id="csv-file-size" class="text-slate-500"></span>
+            </div>
+            <button onclick="resetAll()" class="text-rose-400 hover:text-rose-300 font-medium">Hapus File</button>
+          </div>
+
+          <!-- Column Selector Dropdown -->
+          <div id="csv-column-selector-wrapper" class="hidden p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/20 space-y-2">
+            <label for="csv-column-select" class="block text-xs font-semibold text-indigo-300">
+              Pilih Kolom Numerik untuk Dianalisis:
+            </label>
+            <div class="relative">
+              <select id="csv-column-select" class="w-full bg-slate-900 border border-indigo-500/30 rounded-lg p-2.5 text-sm text-slate-100 font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              </select>
+            </div>
+            <p class="text-[11px] text-slate-400">Sistem otomatis mendeteksi kolom yang memiliki dominasi nilai numerik.</p>
+          </div>
+
+          <!-- CSV Preview Data Table (Top 3 Rows) -->
+          <div id="csv-preview-container" class="hidden space-y-2">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pratinjau Data CSV (3 Baris Pertama):</p>
+            <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/60 max-h-36">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead id="csv-preview-thead"></thead>
+                <tbody id="csv-preview-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons Toolbar -->
+      <div class="mt-6 pt-5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="processData()" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/40 transition-all flex items-center gap-2 transform active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Proses / Hitung Data
+          </button>
+
+          <button onclick="loadSampleData()" class="px-4 py-2.5 rounded-xl font-medium text-sm bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition-all flex items-center gap-2 transform active:scale-95">
+            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Muat Data Contoh (Outlier Demo)
+          </button>
+        </div>
+
+        <button onclick="resetAll()" class="px-4 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-slate-200 bg-slate-900/60 hover:bg-slate-800 border border-slate-800 transition-all flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Reset
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- BAGIAN 2 & 3: HASIL DASHBOARD & VISUALISASI INTERAKTIF -->
+    <!-- ============================================================== -->
+    <div id="results-section" class="space-y-8">
+      
+      <!-- HEADER DASHBOARD DENGAN EXPORT BUTTONS -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span class="flex h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            2. Dashboard Hasil Analisis Statistik Deskriptif
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">14 Parameter statistik deskriptif dihitung secara simultan dalam satu tampilan layar.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="copySummaryToClipboard()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            Salin Ringkasan
+          </button>
+          <button onclick="exportSummaryCsv()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Ekspor CSV
+          </button>
+          <button onclick="window.print()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            Cetak / PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- GRID 14 KARTU PARAMETER STATISTIK -->
+      <!-- ============================================================== -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- KARTU 1: JUMLAH DATA (n) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">1. Jumlah Data</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">n</span>
+          </div>
+          <div id="stat-n" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+            <span>Total sampel data yang diproses</span>
+          </div>
+        </div>
+
+        <!-- KARTU 2: TOTAL NILAI (Î£x) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">2. Total Nilai</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Î£x</span>
+          </div>
+          <div id="stat-sum" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+            <span>Jumlah akumulasi seluruh angka</span>
+          </div>
+        </div>
+
+        <!-- KARTU 3: MEAN (RATA-RATA) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden ring-1 ring-indigo-500/30">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-300">3. Mean (Rata-rata)</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">xÌ„</span>
+          </div>
+          <div id="stat-mean" class="text-3xl font-extrabold font-mono-numbers text-indigo-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Rata-rata hitung (Î£x / n)
+          </div>
+        </div>
+
+        <!-- KARTU 4: MEDIAN (NILAI TENGAH) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden ring-1 ring-emerald-500/30">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-300">4. Median</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Me</span>
+          </div>
+          <div id="stat-median" class="text-3xl font-extrabold font-mono-numbers text-emerald-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Titik tengah data terurut (Persentil 50)
+          </div>
+        </div>
+
+        <!-- KARTU 5: MODUS (NILAI TERBANYAK) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-2">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">5. Modus</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Mo</span>
+          </div>
+          <div id="stat-mode" class="text-2xl font-extrabold font-mono text-purple-200 tracking-tight truncate">-</div>
+          <div id="stat-mode-sub" class="text-[11px] text-slate-400 mt-2">
+            Karakteristik frekuensi kemunculan
+          </div>
+        </div>
+
+        <!-- KARTU 6: NILAI MINIMUM -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">6. Nilai Minimum</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Xmin</span>
+          </div>
+          <div id="stat-min" class="text-3xl font-extrabold font-mono-numbers text-sky-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Angka terkecil dalam populasi
+          </div>
+        </div>
+
+        <!-- KARTU 7: NILAI MAKSIMUM -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">7. Nilai Maksimum</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Xmax</span>
+          </div>
+          <div id="stat-max" class="text-3xl font-extrabold font-mono-numbers text-purple-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Angka terbesar dalam populasi
+          </div>
+        </div>
+
+        <!-- KARTU 8: RANGE (JANGKAUAN) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">8. Jangkauan (Range)</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">R</span>
+          </div>
+          <div id="stat-range" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Rentang sebaran (Xmax - Xmin)
+          </div>
+        </div>
+
+        <!-- KARTU 9: VARIANS (SAMPEL & POPULASI) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">9. Varians Sampel</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">sÂ²</span>
+          </div>
+          <div id="stat-variance-sample" class="text-3xl font-extrabold font-mono-numbers text-amber-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+            <span>Derajat bebas (n - 1)</span>
+            <span id="stat-variance-pop" class="font-mono text-amber-400/90 font-medium">ÏƒÂ² = -</span>
+          </div>
+        </div>
+
+        <!-- KARTU 10: STANDAR DEVIASI (SAMPEL & POPULASI) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">10. Standar Deviasi</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-teal-500/20 text-teal-300">s</span>
+          </div>
+          <div id="stat-std-sample" class="text-3xl font-extrabold font-mono-numbers text-teal-200 tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+            <span>Deviasi Baku Sampel (âˆšsÂ²)</span>
+            <span id="stat-std-pop" class="font-mono text-teal-400/90 font-medium">Ïƒ = -</span>
+          </div>
+        </div>
+
+        <!-- KARTU 11: KUARTIL 1 (Q1) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">11. Kuartil Bawah</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Q1</span>
+          </div>
+          <div id="stat-q1" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Persentil ke-25 (Batas 25% data bawah)
+          </div>
+        </div>
+
+        <!-- KARTU 12: KUARTIL 3 (Q3) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">12. Kuartil Atas</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Q3</span>
+          </div>
+          <div id="stat-q3" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Persentil ke-75 (Batas 75% data bawah)
+          </div>
+        </div>
+
+        <!-- KARTU 13: INTERQUARTILE RANGE (IQR) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">13. Jangkauan Interkuartil</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">IQR</span>
+          </div>
+          <div id="stat-iqr" class="text-3xl font-extrabold font-mono-numbers text-white tracking-tight">-</div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Jarak antar kuartil (Q3 - Q1)
+          </div>
+        </div>
+
+        <!-- KARTU 14: DETEKSI OUTLIER (1.5 x IQR) -->
+        <div class="glass-card rounded-2xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-2 border-rose-500/20">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-rose-300">14. Deteksi Outlier (Metode 1.5 Ã— IQR)</span>
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">Tukey Fence</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Batas Bawah (LB):</span>
+              <div id="stat-outlier-lb" class="text-base font-bold font-mono text-slate-200 mt-0.5">-</div>
+              <span class="text-[10px] text-slate-500 font-mono">Q1 - 1.5Ã—IQR</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Batas Atas (UB):</span>
+              <div id="stat-outlier-ub" class="text-base font-bold font-mono text-slate-200 mt-0.5">-</div>
+              <span class="text-[10px] text-slate-500 font-mono">Q3 + 1.5Ã—IQR</span>
+            </div>
+          </div>
+
+          <!-- Badges Outlier -->
+          <div id="stat-outlier-badges" class="mt-2 min-h-[30px] flex items-center">
+            <!-- Dynamic Badges -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- BAGIAN 3: PANEL VISUALISASI INTERAKTIF (PLOTLY.JS) -->
+      <!-- ============================================================== -->
+      <section class="glass-panel rounded-2xl p-6 sm:p-7 shadow-xl border border-slate-800 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-800 gap-4">
+          <div>
+            <h3 class="text-base font-semibold text-white flex items-center gap-2">
+              <span class="flex h-2.5 w-2.5 rounded-full bg-indigo-500"></span>
+              3. Visualisasi Data Interaktif (Plotly Engine)
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Eksplorasi grafis distribusi, sebaran lima serangkai, serta tabel frekuensi kelompok.</p>
+          </div>
+
+          <!-- Segmented Tab Visualisasi -->
+          <div class="flex p-1 bg-slate-900/90 rounded-xl border border-slate-800 self-start sm:self-auto">
+            <button id="tab-chart-histogram" onclick="setChartTab('histogram')" class="px-4 py-2 text-xs md:text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-all">
+              Histogram
+            </button>
+            <button id="tab-chart-boxplot" onclick="setChartTab('boxplot')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+              Boxplot
+            </button>
+            <button id="tab-chart-frequency" onclick="setChartTab('frequency')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+              Tabel & Diagram Batang
+            </button>
+          </div>
+        </div>
+
+        <!-- Controls Tambahan untuk Boxplot -->
+        <div id="boxplot-controls" class="hidden flex items-center justify-between bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs">
+          <span class="text-slate-400 font-medium">Orientasi Tampilan Boxplot:</span>
+          <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+            <button id="btn-orient-h" onclick="setBoxplotOrientation('h')" class="px-2.5 py-1 text-xs font-semibold rounded bg-indigo-600 text-white">
+              Horizontal
+            </button>
+            <button id="btn-orient-v" onclick="setBoxplotOrientation('v')" class="px-2.5 py-1 text-xs font-medium rounded text-slate-400 hover:text-white">
+              Vertikal
+            </button>
+          </div>
+        </div>
+
+        <!-- Kontainer Plotly Chart -->
+        <div id="plot-container" class="w-full h-[400px] sm:h-[450px] rounded-xl overflow-hidden bg-slate-950/40"></div>
+
+        <!-- ============================================================== -->
+        <!-- TABEL DISTRIBUSI FREKUENSI KELOMPOK (ATURAN STURGES) -->
+        <!-- ============================================================== -->
+        <div id="frequency-table-wrapper" class="hidden space-y-4 pt-4 border-t border-slate-800">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-sm font-semibold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Tabel Distribusi Frekuensi Kelompok
+            </h4>
+            <span id="sturges-k-info" class="text-xs font-mono text-indigo-300 bg-indigo-950/40 border border-indigo-500/20 px-3 py-1 rounded-full">
+              Aturan Sturges: k = - kelas
+            </span>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/60 shadow-inner">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-800/80 text-slate-300 border-b border-slate-700/80">
+                  <th class="py-3 px-3 text-center font-bold">No</th>
+                  <th class="py-3 px-3 font-bold">Interval Kelas</th>
+                  <th class="py-3 px-3 font-bold">Tepi Kelas (TB - TA)</th>
+                  <th class="py-3 px-3 text-center font-bold">Titik Tengah (xi)</th>
+                  <th class="py-3 px-3 text-center font-bold">Frekuensi (fi)</th>
+                  <th class="py-3 px-3 text-center font-bold">Frekuensi Relatif (fr)</th>
+                  <th class="py-3 px-3 text-center font-bold">Fk (â‰¤)</th>
+                  <th class="py-3 px-3 text-center font-bold">Fk (â‰¥)</th>
+                </tr>
+              </thead>
+              <tbody id="freq-table-body" class="divide-y divide-slate-800">
+                <!-- Diisi via JavaScript -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-slate-800/90 font-bold text-white border-t-2 border-indigo-500/40">
+                  <td colspan="4" class="py-3 px-3 text-right">TOTAL</td>
+                  <td id="freq-total-fi" class="py-3 px-3 font-mono text-center text-indigo-300">-</td>
+                  <td id="freq-total-fr" class="py-3 px-3 font-mono text-center text-emerald-300">100%</td>
+                  <td colspan="2" class="py-3 px-3 text-slate-400 text-center">-</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- DATA VIEWER: ARRAY TERURUT DENGAN PENANDA STATISTIK -->
+      <!-- ============================================================== -->
+      <section class="glass-panel rounded-2xl p-6 sm:p-7 shadow-xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+              Data Terurut (Sorted Array & Outlier Highlight)
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Seluruh elemen data diurutkan secara ascending dengan penanda khusus untuk nilai ekstrim.</p>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Total: <span id="sorted-count" class="text-indigo-400 font-bold"></span></span>
+        </div>
+
+        <div id="sorted-data-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+          <!-- Diisi via JavaScript -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL PANDUAN RUMUS STATISTIK -->
+  <!-- ============================================================== -->
+  <div id="formula-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-2xl max-h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Referensi Formula & Metodologi Statistik
+        </h3>
+        <button onclick="closeFormulaModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-300 leading-relaxed font-sans">
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-indigo-300">1. Ukuran Pemusatan Data (Central Tendency)</h4>
+          <p>â€¢ <b>Mean (Rata-rata):</b> <span class="font-mono text-slate-200">xÌ„ = Î£x / n</span></p>
+          <p>â€¢ <b>Median (Nilai Tengah):</b> Elemen ke-(n+1)/2 jika ganjil, atau rata-rata dua elemen tengah jika genap.</p>
+          <p>â€¢ <b>Modus:</b> Nilai dengan frekuensi terbesar (Unimodal, Bimodal, Multimodal, atau Tidak Ada Modus jika frekuensi seragam).</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-amber-300">2. Ukuran Penyebaran (Dispersion)</h4>
+          <p>â€¢ <b>Jangkauan (Range):</b> <span class="font-mono text-slate-200">R = Xmax - Xmin</span></p>
+          <p>â€¢ <b>Varians Sampel:</b> <span class="font-mono text-slate-200">sÂ² = Î£(xi - xÌ„)Â² / (n - 1)</span> (Derajat bebas Bessel correction)</p>
+          <p>â€¢ <b>Varians Populasi:</b> <span class="font-mono text-slate-200">ÏƒÂ² = Î£(xi - xÌ„)Â² / n</span></p>
+          <p>â€¢ <b>Standar Deviasi Sampel:</b> <span class="font-mono text-slate-200">s = âˆš(sÂ²)</span></p>
+          <p>â€¢ <b>Standar Deviasi Populasi:</b> <span class="font-mono text-slate-200">Ïƒ = âˆš(ÏƒÂ²)</span></p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-emerald-300">3. Kuartil & Deteksi Outlier (Tukey's Fences)</h4>
+          <p>â€¢ <b>Kuartil 1 (Q1) & Kuartil 3 (Q3):</b> Persentil ke-25 dan ke-75 menggunakan interpolasi linier standar (Metode R-7 / Excel PERCENTILE.INC).</p>
+          <p>â€¢ <b>Interquartile Range (IQR):</b> <span class="font-mono text-slate-200">IQR = Q3 - Q1</span></p>
+          <p>â€¢ <b>Batas Bawah Outlier (Lower Fence):</b> <span class="font-mono text-slate-200">LB = Q1 - (1.5 Ã— IQR)</span></p>
+          <p>â€¢ <b>Batas Atas Outlier (Upper Fence):</b> <span class="font-mono text-slate-200">UB = Q3 + (1.5 Ã— IQR)</span></p>
+          <p>â€¢ <b>Outlier:</b> Nilai yang berada di luar batas <span class="font-mono text-rose-300">(xi < LB atau xi > UB)</span>.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+          <h4 class="font-bold text-sky-300">4. Tabel Distribusi Frekuensi (Aturan Sturges)</h4>
+          <p>â€¢ <b>Banyak Kelas:</b> <span class="font-mono text-slate-200">k = 1 + 3.322 Ã— logâ‚â‚€(n)</span> (Dibulatkan ke bilangan bulat terdekat)</p>
+          <p>â€¢ <b>Panjang Interval Kelas:</b> <span class="font-mono text-slate-200">c = Range / k</span></p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 bg-slate-900/80 text-right">
+        <button onclick="closeFormulaModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition">
+          Tutup Panduan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- FOOTER -->
+  <!-- ============================================================== -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>Â© 2026 StatMaster Pro. Dibangun untuk Pengolahan Statistik Deskriptif Modern.</p>
+      <div class="flex items-center gap-3 text-slate-400">
+        <span>HTML5</span> â€¢ <span>Tailwind CSS</span> â€¢ <span>Plotly.js</span> â€¢ <span>PapaParse</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Script Helpers -->
+  <script>
+    function openFormulaModal() {
+      document.getElementById('formula-modal').classList.remove('hidden');
+    }
+    function closeFormulaModal() {
+      document.getElementById('formula-modal').classList.add('hidden');
+    }
+  </script>
+
+  <!-- Main JavaScript File -->
+  <script>
+/**
+ * StatMaster Pro - Aplikasi Web Pengolahan Data Statistik Deskriptif
+ * Dibangun dengan HTML5, Tailwind CSS, Vanilla JavaScript (ES6+), Plotly.js, dan PapaParse.
+ * 
+ * Modul ini mencakup:
+ * 1. Parser Input Fleksibel (Manual & CSV multi-kolom)
+ * 2. Validasi Input Ketat & Ramah Pengguna
+ * 3. Mesin Hitung 14 Parameter Statistik Deskriptif (Format maks 4 desimal)
+ * 4. Pembuat Tabel Distribusi Frekuensi (Aturan Sturges)
+ * 5. Visualisasi Interaktif Plotly.js (Histogram, Boxplot, Diagram Batang)
+ * 6. Ekspor Laporan & Manajemen State UI
+ */
+
+// ==========================================
+// 1. STATE & KONFIGURASI APLIKASI
+// ==========================================
+const AppState = {
+  activeTab: 'manual',        // 'manual' | 'csv'
+  activeChartTab: 'histogram',// 'histogram' | 'boxplot' | 'frequency'
+  boxplotOrientation: 'h',    // 'h' | 'v'
+  currentData: [],            // Array angka numerik terurut
+  rawInputString: '',
+  csvData: null,              // Objek PapaParse mentah
+  csvHeaders: [],
+  selectedCsvColumn: '',
+  stats: null,                // Objek hasil 14 parameter statistik
+  frequencyTable: null        // Tabel distribusi frekuensi Sturges
+};
+
+// Data Contoh bawaan (Dirancang memiliki sebaran representatif & outlier nyata)
+// Contoh: Nilai ujian 22 siswa dengan outlier bawah (15) dan outlier atas (115, 120)
+const SAMPLE_DATASET = [
+  15, 48, 52, 55, 58, 60, 61, 62, 63, 65, 
+  66, 68, 70, 72, 75, 78, 80, 82, 85, 90, 
+  115, 120
+];
+
+// ==========================================
+// 2. HELPER UTILITY & FORMATTER
+// ==========================================
+
+/**
+ * Format angka dengan maksimal 4 desimal jika pecahan.
+ * Menghilangkan trailing zero (misal 12.5000 -> 12.5, 25.0 -> 25).
+ * @param {number} num 
+ * @param {number} maxDecimals 
+ * @returns {string}
+ */
+function formatNum(num, maxDecimals = 4) {
+  if (num === null || num === undefined || isNaN(num)) return '-';
+  if (Number.isInteger(num)) return num.toString();
+  
+  // Bulatkan ke maxDecimals untuk menghindari floating point artifact
+  const factor = Math.pow(10, maxDecimals);
+  const rounded = Math.round((num + Number.EPSILON) * factor) / factor;
+  return rounded.toString();
+}
+
+/**
+ * Menampilkan pesan alert/notifikasi ramah pengguna
+ * @param {string} message - Pesan notifikasi
+ * @param {'error' | 'success' | 'warning' | 'info'} type - Tipe alert
+ */
+function showAlert(message, type = 'error') {
+  const alertContainer = document.getElementById('alert-container');
+  if (!alertContainer) return;
+
+  const bgColors = {
+    error: 'bg-rose-500/15 border-rose-500/40 text-rose-300',
+    success: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300',
+    warning: 'bg-amber-500/15 border-amber-500/40 text-amber-300',
+    info: 'bg-indigo-500/15 border-indigo-500/40 text-indigo-300'
+  };
+
+  const icons = {
+    error: `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    success: `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    warning: `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`,
+    info: `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+  };
+
+  alertContainer.innerHTML = `
+    <div class="flex items-start gap-3 p-4 rounded-xl border ${bgColors[type]} transition-all duration-300 shadow-lg">
+      ${icons[type]}
+      <div class="flex-1 text-sm font-medium leading-relaxed">${message}</div>
+      <button onclick="dismissAlert()" class="opacity-70 hover:opacity-100 transition-opacity p-1 -mr-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  `;
+  alertContainer.classList.remove('hidden');
+}
+
+function dismissAlert() {
+  const alertContainer = document.getElementById('alert-container');
+  if (alertContainer) {
+    alertContainer.classList.add('hidden');
+    alertContainer.innerHTML = '';
+  }
+}
+
+// ==========================================
+// 3. PARSING DATA & VALIDASI KETAT
+// ==========================================
+
+/**
+ * Parsing teks deret angka dari input manual.
+ * Mendukung pemisah: koma (,), spasi ( ), titik koma (;), atau baris baru (\n).
+ * Mengembalikan objek hasil validasi dan array angka.
+ * @param {string} text 
+ * @returns {{ valid: boolean, numbers: number[], errors: string[] }}
+ */
+function parseManualText(text) {
+  if (!text || text.trim() === '') {
+    return { valid: false, numbers: [], errors: ['Input data masih kosong. Silakan masukkan deret angka atau muat data contoh.'] };
+  }
+
+  // Pisahkan berdasarkan koma, titik koma, spasi ganda, atau baris baru
+  const tokens = text
+    .split(/[\s,;]+/)
+    .map(t => t.trim())
+    .filter(t => t !== '');
+
+  if (tokens.length === 0) {
+    return { valid: false, numbers: [], errors: ['Tidak ada data yang ditemukan dalam teks input.'] };
+  }
+
+  const numbers = [];
+  const invalidTokens = [];
+
+  for (const token of tokens) {
+    // Normalisasi: jika pengguna mengetik koma desimal tunggal seperti "12,5" setelah split token
+    let cleanToken = token;
+    
+    // Periksa apakah token adalah angka valid (mendukung desimal dan notasi ilmiah)
+    const num = Number(cleanToken);
+    if (!isNaN(num) && isFinite(num)) {
+      numbers.push(num);
+    } else {
+      invalidTokens.push(token);
+    }
+  }
+
+  if (invalidTokens.length > 0) {
+    const previewInvalid = invalidTokens.slice(0, 5).map(t => `"${t}"`).join(', ');
+    const moreText = invalidTokens.length > 5 ? ` dan ${invalidTokens.length - 5} lainnya` : '';
+    return {
+      valid: false,
+      numbers: [],
+      errors: [
+        `Ditemukan ${invalidTokens.length} data bukan angka (non-numerik): ${previewInvalid}${moreText}. Harap masukkan hanya angka dengan pemisah koma, titik koma, spasi, atau baris baru.`
+      ]
+    };
+  }
+
+  if (numbers.length < 2) {
+    return {
+      valid: false,
+      numbers: numbers,
+      errors: ['Jumlah data minimal 2 angka untuk dapat menghitung Varians Sampel (derajat bebas n - 1).']
+    };
+  }
+
+  return { valid: true, numbers, errors: [] };
+}
+
+// ==========================================
+// 4. MESIN PERHITUNGAN STATISTIK DESKRIPTIF
+// ==========================================
+
+/**
+ * Menghitung ke-14 parameter statistik deskriptif secara lengkap dan akurat.
+ * @param {number[]} rawData - Array angka numerik
+ * @returns {object} Objek hasil perhitungan statistik
+ */
+function calculateDescriptiveStats(rawData) {
+  // Salin dan urutkan data secara ascending
+  const sorted = [...rawData].sort((a, b) => a - b);
+  const n = sorted.length;
+
+  // 1. Jumlah Data (n)
+  const count = n;
+
+  // 2. Total Nilai (Î£x)
+  const sum = sorted.reduce((acc, val) => acc + val, 0);
+
+  // 3. Mean / Rata-rata (xÌ„ = Î£x / n)
+  const mean = sum / n;
+
+  // 4. Median (Nilai Tengah)
+  let median;
+  if (n % 2 === 1) {
+    median = sorted[Math.floor(n / 2)];
+  } else {
+    const mid1 = sorted[(n / 2) - 1];
+    const mid2 = sorted[n / 2];
+    median = (mid1 + mid2) / 2;
+  }
+
+  // 5. Modus (Nilai yang paling sering muncul)
+  const freqMap = new Map();
+  for (const num of sorted) {
+    freqMap.set(num, (freqMap.get(num) || 0) + 1);
+  }
+
+  let maxFreq = 0;
+  for (const freq of freqMap.values()) {
+    if (freq > maxFreq) maxFreq = freq;
+  }
+
+  // Evaluasi keberadaan modus:
+  // Jika semua elemen memiliki frekuensi sama (misal semua muncul 1 kali, atau semua muncul 2 kali),
+  // maka data dianggap TIDAK MEMILIKI MODUS.
+  let modes = [];
+  const uniqueFreqs = new Set(freqMap.values());
+  const hasMode = maxFreq > 1 && uniqueFreqs.size > 1;
+
+  let modeText = 'Tidak ada modus';
+  let modeClassification = 'Semua nilai memiliki frekuensi yang sama';
+
+  if (hasMode) {
+    for (const [val, freq] of freqMap.entries()) {
+      if (freq === maxFreq) modes.push(val);
+    }
+    modes.sort((a, b) => a - b);
+
+    if (modes.length === 1) {
+      modeClassification = `Unimodal (Frekuensi: ${maxFreq}x)`;
+      modeText = modes.map(m => formatNum(m)).join(', ');
+    } else if (modes.length === 2) {
+      modeClassification = `Bimodal (Frekuensi: ${maxFreq}x)`;
+      modeText = modes.map(m => formatNum(m)).join(', ');
+    } else {
+      modeClassification = `Multimodal (Frekuensi: ${maxFreq}x)`;
+      modeText = modes.map(m => formatNum(m)).join(', ');
+    }
+  }
+
+  // 6. Nilai Minimum (Xmin)
+  const min = sorted[0];
+
+  // 7. Nilai Maksimum (Xmax)
+  const max = sorted[n - 1];
+
+  // 8. Range / Jangkauan (R = Xmax - Xmin)
+  const range = max - min;
+
+  // 9. Varians:
+  // Jumlah kuadrat selisih dari mean: SS = Î£(xi - xÌ„)Â²
+  const ss = sorted.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0);
+  
+  // Varians Sampel (sÂ² = SS / (n - 1))
+  const sampleVariance = n > 1 ? ss / (n - 1) : 0;
+  
+  // Varians Populasi (ÏƒÂ² = SS / n)
+  const populationVariance = ss / n;
+
+  // 10. Standar Deviasi:
+  // Standar Deviasi Sampel (s = âˆšsÂ²)
+  const sampleStdDev = Math.sqrt(sampleVariance);
+  // Standar Deviasi Populasi (Ïƒ = âˆšÏƒÂ²)
+  const populationStdDev = Math.sqrt(populationVariance);
+
+  // 11 & 12. Kuartil 1 (Q1) dan Kuartil 3 (Q3)
+  // Menggunakan interpolasi linier standar (Metode R-7 / Excel PERCENTILE.INC)
+  const calculatePercentile = (p) => {
+    if (n === 1) return sorted[0];
+    const index = p * (n - 1);
+    const lowerIndex = Math.floor(index);
+    const upperIndex = Math.ceil(index);
+    const weight = index - lowerIndex;
+    return sorted[lowerIndex] + weight * (sorted[upperIndex] - sorted[lowerIndex]);
+  };
+
+  const q1 = calculatePercentile(0.25);
+  const q3 = calculatePercentile(0.75);
+
+  // 13. Interquartile Range (IQR = Q3 - Q1)
+  const iqr = q3 - q1;
+
+  // 14. Deteksi Outlier (Metode 1.5 Ã— IQR)
+  // Batas Bawah = Q1 - (1.5 Ã— IQR)
+  // Batas Atas  = Q3 + (1.5 Ã— IQR)
+  const lowerFence = q1 - 1.5 * iqr;
+  const upperFence = q3 + 1.5 * iqr;
+
+  const lowerOutliers = [];
+  const upperOutliers = [];
+  const allOutliers = [];
+
+  for (const num of sorted) {
+    if (num < lowerFence) {
+      lowerOutliers.push(num);
+      allOutliers.push(num);
+    } else if (num > upperFence) {
+      upperOutliers.push(num);
+      allOutliers.push(num);
+    }
+  }
+
+  return {
+    n: count,
+    sum,
+    mean,
+    median,
+    modeText,
+    modeClassification,
+    modes,
+    maxFreq,
+    hasMode,
+    min,
+    max,
+    range,
+    sampleVariance,
+    populationVariance,
+    sampleStdDev,
+    populationStdDev,
+    q1,
+    q3,
+    iqr,
+    lowerFence,
+    upperFence,
+    lowerOutliers,
+    upperOutliers,
+    allOutliers,
+    sortedData: sorted
+  };
+}
+
+// ==========================================
+// 5. TABEL DISTRIBUSI FREKUENSI (ATURAN STURGES)
+// ==========================================
+
+/**
+ * Membuat tabel distribusi frekuensi kelompok berdasarkan Aturan Sturges:
+ * Banyak kelas k = 1 + 3.322 Ã— log10(n)
+ * Panjang kelas c = Range / k
+ * @param {number[]} sorted 
+ * @param {object} stats 
+ * @returns {object}
+ */
+function generateFrequencyDistribution(sorted, stats) {
+  const n = sorted.length;
+  const min = stats.min;
+  const max = stats.max;
+  const range = stats.range;
+
+  if (range === 0) {
+    // Semua nilai sama
+    return {
+      k: 1,
+      classWidth: 1,
+      rows: [{
+        classNumber: 1,
+        interval: `${min} - ${max}`,
+        boundaries: `${min - 0.5} - ${max + 0.5}`,
+        midpoint: min,
+        frequency: n,
+        relFrequency: 100,
+        cumFreqLess: n,
+        cumFreqMore: n
+      }],
+      totalFreq: n,
+      totalRelFreq: 100
+    };
+  }
+
+  // Hitung jumlah kelas k dengan Aturan Sturges
+  let k = Math.round(1 + 3.322 * Math.log10(n));
+  if (k < 3) k = 3;
+  if (k > 12) k = 12; // Batas wajar tampilan
+
+  // Panjang kelas c
+  let c = range / k;
+  // Jika data seluruhnya bilangan bulat, buat panjang kelas sedikit lebih luas atau bulat
+  const isAllInteger = sorted.every(x => Number.isInteger(x));
+  if (isAllInteger && c >= 1) {
+    c = Math.ceil(c);
+  } else {
+    // Bulatkan c ke 4 desimal ke atas
+    c = Math.ceil(c * 10000) / 10000;
+  }
+
+  const rows = [];
+  let currentLower = min;
+  let cumLess = 0;
+
+  for (let i = 0; i < k; i++) {
+    const isLastClass = (i === k - 1);
+    const lower = currentLower;
+    // Kelas atas
+    let upper = lower + c;
+    if (isAllInteger && c >= 1) {
+      upper = lower + c - 1;
+    }
+
+    // Pastikan kelas terakhir mencakup nilai maksimum
+    if (isLastClass && upper < max) {
+      upper = max;
+    }
+
+    // Hitung frekuensi fi
+    let fi = 0;
+    for (const val of sorted) {
+      if (isLastClass) {
+        if (val >= lower && val <= (upper + 0.000001)) fi++;
+      } else {
+        if (isAllInteger) {
+          if (val >= lower && val <= upper) fi++;
+        } else {
+          if (val >= lower && val < upper) fi++;
+        }
+      }
+    }
+
+    cumLess += fi;
+    const midpoint = (lower + upper) / 2;
+    const boundaryLower = isAllInteger ? lower - 0.5 : lower;
+    const boundaryUpper = isAllInteger ? upper + 0.5 : upper;
+
+    rows.push({
+      classNumber: i + 1,
+      lowerLimit: lower,
+      upperLimit: upper,
+      interval: `${formatNum(lower)} - ${formatNum(upper)}`,
+      boundaries: `${formatNum(boundaryLower)} - ${formatNum(boundaryUpper)}`,
+      midpoint: midpoint,
+      frequency: fi,
+      relFrequency: (fi / n) * 100,
+      cumFreqLess: cumLess,
+      cumFreqMore: 0 // Diisi pada pass kedua
+    });
+
+    currentLower = isAllInteger ? upper + 1 : upper;
+  }
+
+  // Hitung Frekuensi Kumulatif Lebih Dari
+  let cumMore = n;
+  for (let i = 0; i < rows.length; i++) {
+    rows[i].cumFreqMore = cumMore;
+    cumMore -= rows[i].frequency;
+  }
+
+  return {
+    k,
+    classWidth: c,
+    rows,
+    totalFreq: n,
+    totalRelFreq: 100
+  };
+}
+
+// ==========================================
+// 6. VISUALISASI INTERAKTIF PLOTLY.JS
+// ==========================================
+
+const PLOTLY_DARK_LAYOUT = {
+  font: { family: 'Plus Jakarta Sans, sans-serif', color: '#94a3b8', size: 12 },
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(15, 23, 42, 0.4)',
+  margin: { l: 55, r: 35, t: 40, b: 50 },
+  autosize: true,
+  xaxis: {
+    gridcolor: 'rgba(255, 255, 255, 0.07)',
+    zerolinecolor: 'rgba(255, 255, 255, 0.15)',
+    tickfont: { color: '#94a3b8' }
+  },
+  yaxis: {
+    gridcolor: 'rgba(255, 255, 255, 0.07)',
+    zerolinecolor: 'rgba(255, 255, 255, 0.15)',
+    tickfont: { color: '#94a3b8' }
+  }
+};
+
+const PLOTLY_CONFIG = {
+  responsive: true,
+  displayModeBar: true,
+  displaylogo: false,
+  modeBarButtonsToRemove: ['lasso2d', 'select2d', 'hoverClosestCartesian', 'hoverCompareCartesian'],
+  toImageButtonOptions: {
+    format: 'png',
+    filename: 'statmaster_chart',
+    height: 600,
+    width: 900,
+    scale: 2
+  }
+};
+
+/**
+ * Render Histogram Distribusi Frekuensi dengan garis vertikal Mean & Median
+ */
+function renderHistogramPlot(data, stats) {
+  const container = document.getElementById('plot-container');
+  if (!container || !window.Plotly) return;
+
+  const trace = {
+    x: data,
+    type: 'histogram',
+    name: 'Distribusi Frekuensi',
+    marker: {
+      color: 'rgba(99, 102, 241, 0.65)',
+      line: {
+        color: '#818cf8',
+        width: 1.5
+      }
+    },
+    opacity: 0.9,
+    hovertemplate: 'Rentang Nilai: %{x}<br>Frekuensi: %{y}<extra></extra>'
+  };
+
+  const layout = {
+    ...PLOTLY_DARK_LAYOUT,
+    title: {
+      text: '<b>Histogram Distribusi Frekuensi Data</b>',
+      font: { color: '#f8fafc', size: 15 },
+      x: 0.05
+    },
+    xaxis: {
+      ...PLOTLY_DARK_LAYOUT.xaxis,
+      title: { text: 'Nilai Data', font: { color: '#cbd5e1', size: 12 } }
+    },
+    yaxis: {
+      ...PLOTLY_DARK_LAYOUT.yaxis,
+      title: { text: 'Frekuensi (Kemunculan)', font: { color: '#cbd5e1', size: 12 } }
+    },
+    shapes: [
+      // Garis Vertikal Penanda Mean
+      {
+        type: 'line',
+        x0: stats.mean,
+        x1: stats.mean,
+        y0: 0,
+        y1: 1,
+        yref: 'paper',
+        line: {
+          color: '#f97316', // Orange
+          width: 2.5,
+          dash: 'dashdot'
+        }
+      },
+      // Garis Vertikal Penanda Median
+      {
+        type: 'line',
+        x0: stats.median,
+        x1: stats.median,
+        y0: 0,
+        y1: 1,
+        yref: 'paper',
+        line: {
+          color: '#10b981', // Emerald
+          width: 2.5,
+          dash: 'dot'
+        }
+      }
+    ],
+    annotations: [
+      {
+        x: stats.mean,
+        y: 1,
+        yref: 'paper',
+        text: `Mean: ${formatNum(stats.mean)}`,
+        showarrow: true,
+        arrowhead: 2,
+        arrowcolor: '#f97316',
+        arrowsize: 1,
+        ax: 35,
+        ay: -25,
+        font: { color: '#f97316', size: 11, family: 'JetBrains Mono, monospace' },
+        bgcolor: 'rgba(15, 23, 42, 0.85)',
+        bordercolor: '#f97316',
+        borderwidth: 1
+      },
+      {
+        x: stats.median,
+        y: 0.85,
+        yref: 'paper',
+        text: `Median: ${formatNum(stats.median)}`,
+        showarrow: true,
+        arrowhead: 2,
+        arrowcolor: '#10b981',
+        arrowsize: 1,
+        ax: -40,
+        ay: -20,
+        font: { color: '#10b981', size: 11, family: 'JetBrains Mono, monospace' },
+        bgcolor: 'rgba(15, 23, 42, 0.85)',
+        bordercolor: '#10b981',
+        borderwidth: 1
+      }
+    ]
+  };
+
+  Plotly.react(container, [trace], layout, PLOTLY_CONFIG);
+}
+
+/**
+ * Render Boxplot Interaktif (Horizontal / Vertical) dengan sebaran Q1, Median, Q3, dan Outliers
+ */
+function renderBoxplotPlot(data, stats, orientation = 'h') {
+  const container = document.getElementById('plot-container');
+  if (!container || !window.Plotly) return;
+
+  const isHorizontal = orientation === 'h';
+
+  const trace = {
+    [isHorizontal ? 'x' : 'y']: data,
+    type: 'box',
+    name: 'Sebaran Data',
+    boxpoints: 'all',          // Tampilkan semua titik data
+    jitter: 0.35,              // Jitter sebaran titik agar tidak saling menumpuk
+    pointpos: -1.8,            // Posisi sebaran titik di samping box
+    boxmean: 'sd',             // Tampilkan Mean dan Garis Standar Deviasi
+    marker: {
+      color: '#6366f1',
+      size: 6,
+      outliercolor: '#ef4444', // Merah untuk outlier
+      symbol: 'circle'
+    },
+    line: {
+      color: '#818cf8',
+      width: 2
+    },
+    fillcolor: 'rgba(99, 102, 241, 0.25)',
+    hoveron: 'boxes+points',
+    hovertemplate: isHorizontal 
+      ? 'Nilai: %{x}<extra></extra>' 
+      : 'Nilai: %{y}<extra></extra>'
+  };
+
+  const layout = {
+    ...PLOTLY_DARK_LAYOUT,
+    title: {
+      text: `<b>Box & Whisker Plot Interaktif (${isHorizontal ? 'Horizontal' : 'Vertikal'})</b>`,
+      font: { color: '#f8fafc', size: 15 },
+      x: 0.05
+    },
+    xaxis: {
+      ...PLOTLY_DARK_LAYOUT.xaxis,
+      title: { text: isHorizontal ? 'Nilai Data' : '', font: { color: '#cbd5e1', size: 12 } }
+    },
+    yaxis: {
+      ...PLOTLY_DARK_LAYOUT.yaxis,
+      title: { text: !isHorizontal ? 'Nilai Data' : '', font: { color: '#cbd5e1', size: 12 } }
+    },
+    annotations: [
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.98,
+        y: 0.05,
+        text: `Q1: ${formatNum(stats.q1)} | Me: ${formatNum(stats.median)} | Q3: ${formatNum(stats.q3)} | Outlier: ${stats.allOutliers.length}`,
+        showarrow: false,
+        font: { color: '#94a3b8', size: 11, family: 'JetBrains Mono, monospace' },
+        bgcolor: 'rgba(15, 23, 42, 0.7)',
+        bordercolor: 'rgba(255, 255, 255, 0.1)',
+        borderwidth: 1
+      }
+    ]
+  };
+
+  Plotly.react(container, [trace], layout, PLOTLY_CONFIG);
+}
+
+/**
+ * Render Diagram Batang Frekuensi
+ */
+function renderFrequencyBarChart(freqTable) {
+  const container = document.getElementById('plot-container');
+  if (!container || !window.Plotly || !freqTable) return;
+
+  const categories = freqTable.rows.map(r => r.interval);
+  const frequencies = freqTable.rows.map(r => r.frequency);
+
+  const trace = {
+    x: categories,
+    y: frequencies,
+    type: 'bar',
+    name: 'Frekuensi Interval',
+    marker: {
+      color: frequencies.map((_, i) => `hsla(${230 + (i * 12)}, 80%, 65%, 0.75)`),
+      line: {
+        color: '#6366f1',
+        width: 1.5
+      }
+    },
+    text: frequencies.map(f => `${f}`),
+    textposition: 'auto',
+    textfont: {
+      family: 'JetBrains Mono, monospace',
+      size: 12,
+      color: '#ffffff'
+    },
+    hovertemplate: 'Interval Kelas: %{x}<br>Frekuensi (fi): %{y}<br>Frekuensi Relatif: %{text}%<extra></extra>',
+    text: freqTable.rows.map(r => formatNum(r.relFrequency))
+  };
+
+  const layout = {
+    ...PLOTLY_DARK_LAYOUT,
+    title: {
+      text: '<b>Diagram Batang Frekuensi (Berdasarkan Interval Kelas Sturges)</b>',
+      font: { color: '#f8fafc', size: 15 },
+      x: 0.05
+    },
+    xaxis: {
+      ...PLOTLY_DARK_LAYOUT.xaxis,
+      title: { text: 'Interval Kelas', font: { color: '#cbd5e1', size: 12 } }
+    },
+    yaxis: {
+      ...PLOTLY_DARK_LAYOUT.yaxis,
+      title: { text: 'Frekuensi (fi)', font: { color: '#cbd5e1', size: 12 } }
+    }
+  };
+
+  Plotly.react(container, [trace], layout, PLOTLY_CONFIG);
+}
+
+// ==========================================
+// 7. RENDER DASHBOARD HASIL KE DOM
+// ==========================================
+
+/**
+ * Tampilkan 14 parameter statistik deskriptif ke dalam 14 kartu modern
+ */
+function renderDashboardStats(stats) {
+  // Update Nilai Utama Kartu
+  setText('stat-n', formatNum(stats.n));
+  setText('stat-sum', formatNum(stats.sum));
+  setText('stat-mean', formatNum(stats.mean));
+  setText('stat-median', formatNum(stats.median));
+  
+  // Modus
+  setText('stat-mode', stats.modeText);
+  setText('stat-mode-sub', stats.modeClassification);
+
+  // Min, Max, Range
+  setText('stat-min', formatNum(stats.min));
+  setText('stat-max', formatNum(stats.max));
+  setText('stat-range', formatNum(stats.range));
+
+  // Varians (Sampel Utama, Populasi Sekunder)
+  setText('stat-variance-sample', formatNum(stats.sampleVariance));
+  setText('stat-variance-pop', `ÏƒÂ² = ${formatNum(stats.populationVariance)}`);
+
+  // Standar Deviasi (Sampel Utama, Populasi Sekunder)
+  setText('stat-std-sample', formatNum(stats.sampleStdDev));
+  setText('stat-std-pop', `Ïƒ = ${formatNum(stats.populationStdDev)}`);
+
+  // Kuartil 1, Kuartil 3, IQR
+  setText('stat-q1', formatNum(stats.q1));
+  setText('stat-q3', formatNum(stats.q3));
+  setText('stat-iqr', formatNum(stats.iqr));
+
+  // Parameter 14: Deteksi Outlier (1.5 x IQR)
+  setText('stat-outlier-lb', formatNum(stats.lowerFence));
+  setText('stat-outlier-ub', formatNum(stats.upperFence));
+
+  const outlierBadgeContainer = document.getElementById('stat-outlier-badges');
+  if (outlierBadgeContainer) {
+    if (stats.allOutliers.length === 0) {
+      outlierBadgeContainer.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Tidak ada outlier terdeteksi
+        </span>
+      `;
+    } else {
+      let badgesHtml = `<div class="flex flex-wrap gap-1.5 items-center">`;
+      badgesHtml += `<span class="text-xs font-semibold text-rose-400 mr-1">${stats.allOutliers.length} Outlier Ditemukan:</span>`;
+
+      if (stats.lowerOutliers.length > 0) {
+        badgesHtml += stats.lowerOutliers.map(val => 
+          `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-mono font-medium bg-rose-500/20 text-rose-300 border border-rose-500/40" title="Outlier Bawah (< ${formatNum(stats.lowerFence)})">
+            â†“ ${formatNum(val)}
+          </span>`
+        ).join('');
+      }
+
+      if (stats.upperOutliers.length > 0) {
+        badgesHtml += stats.upperOutliers.map(val => 
+          `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-mono font-medium bg-rose-500/20 text-rose-300 border border-rose-500/40" title="Outlier Atas (> ${formatNum(stats.upperFence)})">
+            â†‘ ${formatNum(val)}
+          </span>`
+        ).join('');
+      }
+
+      badgesHtml += `</div>`;
+      outlierBadgeContainer.innerHTML = badgesHtml;
+    }
+  }
+
+  // Tampilkan data terurut pada Data Inspector
+  renderSortedDataViewer(stats.sortedData, stats);
+
+  // Munculkan kontainer hasil
+  const resultsContainer = document.getElementById('results-section');
+  if (resultsContainer) {
+    resultsContainer.classList.remove('hidden');
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/**
+ * Render Tabel Distribusi Frekuensi Kelompok
+ */
+function renderFrequencyTable(freqTable) {
+  const tbody = document.getElementById('freq-table-body');
+  if (!tbody || !freqTable) return;
+
+  tbody.innerHTML = freqTable.rows.map(row => `
+    <tr class="border-b border-slate-700/50 hover:bg-slate-800/40 transition-colors">
+      <td class="py-2.5 px-3 font-mono text-center text-slate-400">${row.classNumber}</td>
+      <td class="py-2.5 px-3 font-mono font-semibold text-indigo-300">${row.interval}</td>
+      <td class="py-2.5 px-3 font-mono text-slate-300">${row.boundaries}</td>
+      <td class="py-2.5 px-3 font-mono text-slate-300 text-center">${formatNum(row.midpoint)}</td>
+      <td class="py-2.5 px-3 font-mono font-bold text-white text-center">${row.frequency}</td>
+      <td class="py-2.5 px-3 font-mono text-emerald-400 text-center">${formatNum(row.relFrequency)}%</td>
+      <td class="py-2.5 px-3 font-mono text-sky-400 text-center">${row.cumFreqLess}</td>
+      <td class="py-2.5 px-3 font-mono text-amber-400 text-center">${row.cumFreqMore}</td>
+    </tr>
+  `).join('');
+
+  // Update Footer Total
+  setText('freq-total-fi', freqTable.totalFreq);
+  setText('freq-total-fr', `${freqTable.totalRelFreq}%`);
+  setText('sturges-k-info', `Aturan Sturges: k = ${freqTable.k} kelas, Panjang Kelas (c) â‰ˆ ${formatNum(freqTable.classWidth)}`);
+}
+
+/**
+ * Render visualisasi array data terurut dengan badge khusus untuk Min, Q1, Median, Q3, Max, dan Outlier
+ */
+function renderSortedDataViewer(sortedData, stats) {
+  const container = document.getElementById('sorted-data-list');
+  if (!container) return;
+
+  setText('sorted-count', `${sortedData.length} data`);
+
+  container.innerHTML = sortedData.map((val, idx) => {
+    const isOutlier = val < stats.lowerFence || val > stats.upperFence;
+    const isMin = idx === 0;
+    const isMax = idx === sortedData.length - 1;
+
+    let badgeClass = 'bg-slate-800/80 border-slate-700 text-slate-200';
+    let extraLabel = '';
+
+    if (isOutlier) {
+      badgeClass = 'bg-rose-500/20 border-rose-500/50 text-rose-300 font-bold ring-1 ring-rose-500/30';
+      extraLabel = '<span class="text-[10px] text-rose-400 ml-1">OUTLIER</span>';
+    } else if (isMin) {
+      badgeClass = 'bg-sky-500/20 border-sky-500/40 text-sky-300';
+      extraLabel = '<span class="text-[10px] text-sky-400 ml-1">MIN</span>';
+    } else if (isMax) {
+      badgeClass = 'bg-purple-500/20 border-purple-500/40 text-purple-300';
+      extraLabel = '<span class="text-[10px] text-purple-400 ml-1">MAX</span>';
+    }
+
+    return `
+      <div class="px-2.5 py-1.5 rounded-lg border text-xs font-mono flex items-center justify-between ${badgeClass}">
+        <span class="text-slate-400 text-[10px] mr-1.5">[${idx + 1}]</span>
+        <span class="font-bold">${formatNum(val)}</span>
+        ${extraLabel}
+      </div>
+    `;
+  }).join('');
+}
+
+function setText(elementId, text) {
+  const el = document.getElementById(elementId);
+  if (el) el.textContent = text;
+}
+
+// ==========================================
+// 8. KONTROL CHART & SWITCH TAB
+// ==========================================
+
+function updateActiveChart() {
+  if (!AppState.stats || !AppState.currentData.length) return;
+
+  const chartContainer = document.getElementById('plot-container');
+  const tableContainer = document.getElementById('frequency-table-wrapper');
+  const boxplotControls = document.getElementById('boxplot-controls');
+
+  if (AppState.activeChartTab === 'histogram') {
+    if (chartContainer) chartContainer.classList.remove('hidden');
+    if (tableContainer) tableContainer.classList.add('hidden');
+    if (boxplotControls) boxplotControls.classList.add('hidden');
+    renderHistogramPlot(AppState.currentData, AppState.stats);
+  } else if (AppState.activeChartTab === 'boxplot') {
+    if (chartContainer) chartContainer.classList.remove('hidden');
+    if (tableContainer) tableContainer.classList.add('hidden');
+    if (boxplotControls) boxplotControls.classList.remove('hidden');
+    renderBoxplotPlot(AppState.currentData, AppState.stats, AppState.boxplotOrientation);
+  } else if (AppState.activeChartTab === 'frequency') {
+    if (chartContainer) chartContainer.classList.remove('hidden');
+    if (tableContainer) tableContainer.classList.remove('hidden');
+    if (boxplotControls) boxplotControls.classList.add('hidden');
+    renderFrequencyBarChart(AppState.frequencyTable);
+    renderFrequencyTable(AppState.frequencyTable);
+  }
+}
+
+function setChartTab(tabName) {
+  AppState.activeChartTab = tabName;
+
+  // Update styling tombol tab
+  ['histogram', 'boxplot', 'frequency'].forEach(t => {
+    const btn = document.getElementById(`tab-chart-${t}`);
+    if (btn) {
+      if (t === tabName) {
+        btn.className = 'px-4 py-2 text-xs md:text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-all';
+      } else {
+        btn.className = 'px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all';
+      }
+    }
+  });
+
+  updateActiveChart();
+}
+
+function setBoxplotOrientation(orient) {
+  AppState.boxplotOrientation = orient;
+
+  const btnH = document.getElementById('btn-orient-h');
+  const btnV = document.getElementById('btn-orient-v');
+
+  if (btnH && btnV) {
+    if (orient === 'h') {
+      btnH.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-indigo-600 text-white';
+      btnV.className = 'px-2.5 py-1 text-xs font-medium rounded text-slate-400 hover:text-white';
+    } else {
+      btnH.className = 'px-2.5 py-1 text-xs font-medium rounded text-slate-400 hover:text-white';
+      btnV.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-indigo-600 text-white';
+    }
+  }
+
+  if (AppState.activeChartTab === 'boxplot') {
+    renderBoxplotPlot(AppState.currentData, AppState.stats, orient);
+  }
+}
+
+// ==========================================
+// 9. PROSES DATA UTAMA (TRIGGER HITUNG)
+// ==========================================
+
+function processData() {
+  dismissAlert();
+  let numbers = [];
+
+  if (AppState.activeTab === 'manual') {
+    const textarea = document.getElementById('manual-data-input');
+    const rawText = textarea ? textarea.value : '';
+    const parseResult = parseManualText(rawText);
+
+    if (!parseResult.valid) {
+      showAlert(parseResult.errors.join('<br>'), 'error');
+      return;
+    }
+    numbers = parseResult.numbers;
+  } else if (AppState.activeTab === 'csv') {
+    if (!AppState.csvData || !AppState.csvData.data) {
+      showAlert('Silakan upload file CSV terlebih dahulu.', 'error');
+      return;
+    }
+
+    const columnSelect = document.getElementById('csv-column-select');
+    const selectedCol = columnSelect ? columnSelect.value : '';
+    if (!selectedCol) {
+      showAlert('Pilih kolom numerik dari file CSV yang ingin dianalisis.', 'error');
+      return;
+    }
+
+    // Ambil semua data pada kolom terpilih
+    const colValues = [];
+    const nonNumericValues = [];
+
+    for (const row of AppState.csvData.data) {
+      if (row[selectedCol] !== undefined && row[selectedCol] !== null && String(row[selectedCol]).trim() !== '') {
+        const valStr = String(row[selectedCol]).trim();
+        const num = Number(valStr);
+        if (!isNaN(num) && isFinite(num)) {
+          colValues.push(num);
+        } else {
+          nonNumericValues.push(valStr);
+        }
+      }
+    }
+
+    if (colValues.length < 2) {
+      showAlert(`Kolom "${selectedCol}" hanya memiliki ${colValues.length} nilai numerik valid. Minimal dibutuhkan 2 data numerik.`, 'error');
+      return;
+    }
+
+    if (nonNumericValues.length > 0) {
+      showAlert(`Informasi: ${nonNumericValues.length} baris dengan teks non-numerik diabaikan pada kolom "${selectedCol}". Memproses ${colValues.length} data numerik.`, 'info');
+    }
+
+    numbers = colValues;
+  }
+
+  // Simpan data dan jalankan perhitungan statistik
+  AppState.currentData = numbers;
+  const stats = calculateDescriptiveStats(numbers);
+  AppState.stats = stats;
+
+  // Buat tabel distribusi frekuensi
+  const freqTable = generateFrequencyDistribution(stats.sortedData, stats);
+  AppState.frequencyTable = freqTable;
+
+  // Render semua komponen UI
+  renderDashboardStats(stats);
+  updateActiveChart();
+
+  showAlert(`Berhasil memproses ${stats.n} data! Seluruh 14 parameter statistik dan visualisasi interaktif telah diperbarui.`, 'success');
+}
+
+// ==========================================
+// 10. EVENT HANDLER & INTERAKSI INPUT
+// ==========================================
+
+function setInputTab(tab) {
+  AppState.activeTab = tab;
+
+  const btnManual = document.getElementById('tab-btn-manual');
+  const btnCsv = document.getElementById('tab-btn-csv');
+  const panelManual = document.getElementById('panel-input-manual');
+  const panelCsv = document.getElementById('panel-input-csv');
+
+  if (tab === 'manual') {
+    if (btnManual) btnManual.className = 'flex-1 py-3 px-4 rounded-xl font-semibold text-sm bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all';
+    if (btnCsv) btnCsv.className = 'flex-1 py-3 px-4 rounded-xl font-medium text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center gap-2 transition-all';
+    if (panelManual) panelManual.classList.remove('hidden');
+    if (panelCsv) panelCsv.classList.add('hidden');
+  } else {
+    if (btnManual) btnManual.className = 'flex-1 py-3 px-4 rounded-xl font-medium text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center gap-2 transition-all';
+    if (btnCsv) btnCsv.className = 'flex-1 py-3 px-4 rounded-xl font-semibold text-sm bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all';
+    if (panelManual) panelManual.classList.add('hidden');
+    if (panelCsv) panelCsv.classList.remove('hidden');
+  }
+}
+
+/**
+ * Muat data contoh uji (dilengkapi dengan outlier)
+ */
+function loadSampleData() {
+  dismissAlert();
+  // Beralih ke tab manual
+  setInputTab('manual');
+
+  const textarea = document.getElementById('manual-data-input');
+  if (textarea) {
+    textarea.value = SAMPLE_DATASET.join(', ');
+  }
+
+  // Langsung proses data contoh agar pengguna dapat langsung melihat hasilnya
+  processData();
+}
+
+/**
+ * Reset seluruh formulir, hasil perhitungan, dan chart
+ */
+function resetAll() {
+  dismissAlert();
+  AppState.currentData = [];
+  AppState.stats = null;
+  AppState.csvData = null;
+  AppState.csvHeaders = [];
+  AppState.selectedCsvColumn = '';
+
+  const textarea = document.getElementById('manual-data-input');
+  if (textarea) textarea.value = '';
+
+  const fileInput = document.getElementById('csv-file-input');
+  if (fileInput) fileInput.value = '';
+
+  const csvInfo = document.getElementById('csv-file-info');
+  if (csvInfo) csvInfo.classList.add('hidden');
+
+  const csvColWrapper = document.getElementById('csv-column-selector-wrapper');
+  if (csvColWrapper) csvColWrapper.classList.add('hidden');
+
+  const resultsSection = document.getElementById('results-section');
+  if (resultsSection) resultsSection.classList.add('hidden');
+
+  const chartContainer = document.getElementById('plot-container');
+  if (chartContainer && window.Plotly) {
+    Plotly.purge(chartContainer);
+  }
+
+  showAlert('Formulir dan hasil perhitungan berhasil direset.', 'info');
+}
+
+/**
+ * Penanganan Upload File CSV menggunakan PapaParse CDN
+ */
+function handleCsvUpload(file) {
+  dismissAlert();
+  if (!file) return;
+
+  if (!file.name.toLowerCase().endsWith('.csv') && file.type !== 'text/csv') {
+    showAlert('Harap upload file berekstensi .csv yang valid.', 'error');
+    return;
+  }
+
+  if (!window.Papa) {
+    showAlert('Library PapaParse gagal dimuat dari CDN. Periksa koneksi internet Anda.', 'error');
+    return;
+  }
+
+  // Tampilkan info file
+  const infoEl = document.getElementById('csv-file-info');
+  const nameEl = document.getElementById('csv-file-name');
+  const sizeEl = document.getElementById('csv-file-size');
+  if (infoEl && nameEl && sizeEl) {
+    nameEl.textContent = file.name;
+    sizeEl.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+    infoEl.classList.remove('hidden');
+  }
+
+  // Parsing file CSV dengan PapaParse
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: false,
+    skipEmptyLines: true,
+    complete: function (results) {
+      if (results.errors.length > 0 && results.data.length === 0) {
+        showAlert(`Gagal mem-parsing CSV: ${results.errors[0].message}`, 'error');
+        return;
+      }
+
+      AppState.csvData = results;
+      AppState.csvHeaders = results.meta.fields || [];
+
+      if (AppState.csvHeaders.length === 0) {
+        showAlert('File CSV tidak memiliki baris header kolom.', 'error');
+        return;
+      }
+
+      populateCsvColumnSelect(AppState.csvHeaders, results.data);
+      showAlert(`Berhasil membaca file CSV: ${results.data.length} baris data ditemukan. Silakan pilih kolom yang akan dianalisis lalu klik tombol "Proses / Hitung".`, 'info');
+    },
+    error: function (err) {
+      showAlert(`Terjadi kesalahan membaca file CSV: ${err.message}`, 'error');
+    }
+  });
+}
+
+/**
+ * Mengisi dropdown pilihan kolom dan mendeteksi kolom numerik secara otomatis
+ */
+function populateCsvColumnSelect(headers, dataRows) {
+  const select = document.getElementById('csv-column-select');
+  const wrapper = document.getElementById('csv-column-selector-wrapper');
+  if (!select || !wrapper) return;
+
+  select.innerHTML = '';
+  wrapper.classList.remove('hidden');
+
+  let defaultNumericCol = '';
+
+  headers.forEach(header => {
+    // Periksa proporsi numerik pada kolom ini
+    let numCount = 0;
+    const sampleSize = Math.min(dataRows.length, 50);
+
+    for (let i = 0; i < sampleSize; i++) {
+      const val = dataRows[i][header];
+      if (val !== undefined && val !== null && String(val).trim() !== '' && !isNaN(Number(val))) {
+        numCount++;
+      }
+    }
+
+    const isNumericCandidate = numCount / sampleSize > 0.6;
+    if (isNumericCandidate && !defaultNumericCol) {
+      defaultNumericCol = header;
+    }
+
+    const option = document.createElement('option');
+    option.value = header;
+    option.textContent = `${header} ${isNumericCandidate ? '(Numerik âœ“)' : '(Teks/Lainnya)'}`;
+    select.appendChild(option);
+  });
+
+  if (defaultNumericCol) {
+    select.value = defaultNumericCol;
+    AppState.selectedCsvColumn = defaultNumericCol;
+  } else if (headers.length > 0) {
+    select.value = headers[0];
+    AppState.selectedCsvColumn = headers[0];
+  }
+
+  // Tampilkan preview cuplikan 3 baris
+  updateCsvPreview(dataRows, headers);
+}
+
+function updateCsvPreview(rows, headers) {
+  const previewContainer = document.getElementById('csv-preview-container');
+  const previewThead = document.getElementById('csv-preview-thead');
+  const previewTbody = document.getElementById('csv-preview-tbody');
+
+  if (!previewContainer || !previewThead || !previewTbody) return;
+
+  previewThead.innerHTML = `<tr>${headers.map(h => `<th class="py-1 px-2 text-left font-mono text-[11px] text-slate-400 bg-slate-800/60">${h}</th>`).join('')}</tr>`;
+
+  const previewRows = rows.slice(0, 3);
+  previewTbody.innerHTML = previewRows.map(r => `
+    <tr class="border-t border-slate-700/50">
+      ${headers.map(h => `<td class="py-1 px-2 text-[11px] font-mono text-slate-300 truncate max-w-[120px]">${r[h] ?? ''}</td>`).join('')}
+    </tr>
+  `).join('');
+
+  previewContainer.classList.remove('hidden');
+}
+
+// ==========================================
+// 11. EKSPOR LAPORAN & CLIPBOARD
+// ==========================================
+
+/**
+ * Salin ringkasan ke clipboard dengan format rapi
+ */
+function copySummaryToClipboard() {
+  if (!AppState.stats) {
+    showAlert('Belum ada data hasil perhitungan untuk disalin.', 'warning');
+    return;
+  }
+
+  const s = AppState.stats;
+  const report = `=========================================
+LAPORAN STATISTIK DESKRIPTIF (StatMaster Pro)
+=========================================
+Jumlah Data (n)              : ${s.n}
+Total Nilai (Î£x)             : ${formatNum(s.sum)}
+Mean (Rata-rata, xÌ„)          : ${formatNum(s.mean)}
+Median (Nilai Tengah, Me)    : ${formatNum(s.median)}
+Modus (Mo)                   : ${s.modeText} (${s.modeClassification})
+Nilai Minimum (Xmin)         : ${formatNum(s.min)}
+Nilai Maksimum (Xmax)        : ${formatNum(s.max)}
+Jangkauan / Range (R)        : ${formatNum(s.range)}
+Varians Sampel (sÂ²)          : ${formatNum(s.sampleVariance)}
+Varians Populasi (ÏƒÂ²)        : ${formatNum(s.populationVariance)}
+Standar Deviasi Sampel (s)   : ${formatNum(s.sampleStdDev)}
+Standar Deviasi Populasi (Ïƒ) : ${formatNum(s.populationStdDev)}
+Kuartil 1 (Q1, 25%)          : ${formatNum(s.q1)}
+Kuartil 3 (Q3, 75%)          : ${formatNum(s.q3)}
+Interquartile Range (IQR)    : ${formatNum(s.iqr)}
+-----------------------------------------
+DETEKSI OUTLIER (Metode 1.5 Ã— IQR):
+Batas Bawah (Q1 - 1.5Ã—IQR)   : ${formatNum(s.lowerFence)}
+Batas Atas (Q3 + 1.5Ã—IQR)    : ${formatNum(s.upperFence)}
+Jumlah Outlier               : ${s.allOutliers.length} data
+Daftar Outlier               : ${s.allOutliers.length > 0 ? s.allOutliers.join(', ') : 'Tidak ada'}
+=========================================`;
+
+  navigator.clipboard.writeText(report).then(() => {
+    showAlert('Ringkasan 14 parameter statistik berhasil disalin ke clipboard!', 'success');
+  }).catch(() => {
+    showAlert('Gagal menyalin ke clipboard. Silakan salin manual.', 'error');
+  });
+}
+
+/**
+ * Download hasil parameter statistik dalam format CSV
+ */
+function exportSummaryCsv() {
+  if (!AppState.stats) {
+    showAlert('Belum ada data untuk diekspor.', 'warning');
+    return;
+  }
+
+  const s = AppState.stats;
+  const csvRows = [
+    ['Parameter Statistik', 'Simbol/Notasi', 'Nilai', 'Keterangan'],
+    ['Jumlah Data', 'n', s.n, 'Total elemen data'],
+    ['Total Nilai', 'Î£x', formatNum(s.sum), 'Penjumlahan seluruh data'],
+    ['Mean (Rata-rata)', 'xÌ„', formatNum(s.mean), 'Rata-rata hitung'],
+    ['Median', 'Me', formatNum(s.median), 'Nilai tengah data terurut'],
+    ['Modus', 'Mo', `"${s.modeText}"`, s.modeClassification],
+    ['Nilai Minimum', 'Xmin', formatNum(s.min), 'Nilai terendah'],
+    ['Nilai Maksimum', 'Xmax', formatNum(s.max), 'Nilai tertinggi'],
+    ['Jangkauan (Range)', 'R', formatNum(s.range), 'Xmax - Xmin'],
+    ['Varians Sampel', 'sÂ²', formatNum(s.sampleVariance), 'Derajat bebas n-1'],
+    ['Varians Populasi', 'ÏƒÂ²', formatNum(s.populationVariance), 'Dibagi n'],
+    ['Standar Deviasi Sampel', 's', formatNum(s.sampleStdDev), 'Akar kuadrat varians sampel'],
+    ['Standar Deviasi Populasi', 'Ïƒ', formatNum(s.populationStdDev), 'Akar kuadrat varians populasi'],
+    ['Kuartil 1', 'Q1', formatNum(s.q1), 'Persentil ke-25'],
+    ['Kuartil 3', 'Q3', formatNum(s.q3), 'Persentil ke-75'],
+    ['Interquartile Range', 'IQR', formatNum(s.iqr), 'Q3 - Q1'],
+    ['Batas Bawah Outlier', 'LB', formatNum(s.lowerFence), 'Q1 - 1.5Ã—IQR'],
+    ['Batas Atas Outlier', 'UB', formatNum(s.upperFence), 'Q3 + 1.5Ã—IQR'],
+    ['Outlier Terdeteksi', 'Outliers', `"${s.allOutliers.join(', ')}"`, `${s.allOutliers.length} data ditemukan`]
+  ];
+
+  const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `ringkasan_statistik_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ==========================================
+// 12. INITIALIZATION ON DOM READY
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Setup Drag & Drop File CSV
+  const dropZone = document.getElementById('csv-dropzone');
+  const fileInput = document.getElementById('csv-file-input');
+
+  if (dropZone && fileInput) {
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-indigo-500', 'bg-indigo-500/10');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        handleCsvUpload(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleCsvUpload(e.target.files[0]);
+      }
+    });
+  }
+
+  // Update real-time word/number count di manual input
+  const manualInput = document.getElementById('manual-data-input');
+  const countBadge = document.getElementById('manual-count-badge');
+  if (manualInput && countBadge) {
+    manualInput.addEventListener('input', () => {
+      const tokens = manualInput.value.split(/[\s,;]+/).filter(t => t.trim() !== '' && !isNaN(Number(t)));
+      countBadge.textContent = `${tokens.length} angka terdeteksi`;
+    });
+  }
+
+  // Window resize handler for Plotly
+  window.addEventListener('resize', () => {
+    const plotContainer = document.getElementById('plot-container');
+    if (plotContainer && window.Plotly && !plotContainer.classList.contains('hidden')) {
+      Plotly.Plots.resize(plotContainer);
+    }
+  });
+
+  // Muat data contoh secara otomatis di awal agar saat dibuka aplikasi langsung menampilkan dashboard hasil yang menarik!
+  loadSampleData();
+});
+
+</script>
+</body>
+</html>
+
