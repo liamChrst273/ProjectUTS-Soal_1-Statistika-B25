@@ -1,4 +1,4 @@
-/* Clean, Modern & User-Friendly Stylesheet for Stat Prototype Group 2 */
+/* Sleek, Modern & User-Friendly Dark Theme Stylesheet for Stat Prototype Group 2 */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
@@ -8,8 +8,8 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #f8fafc;
-  color: #1e293b;
+  background-color: #0b0f19;
+  color: #f1f5f9;
   min-height: 100vh;
 }
 
@@ -18,22 +18,21 @@ body {
   font-feature-settings: 'tnum' on, 'zero' on;
 }
 
-/* Clean Card Styles with Soft Elevation */
+/* Sleek Dark Card Styles */
 .app-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  background: #111827;
+  border: 1px solid #1f2937;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease-in-out;
 }
 
 .app-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  border-color: #374151;
 }
 
 .stat-metric-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #111827;
+  border: 1px solid #1f2937;
   border-radius: 1rem;
   padding: 1.25rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -43,7 +42,7 @@ body {
 .stat-metric-card:hover {
   transform: translateY(-2px);
   border-color: #6366f1;
-  box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
 }
 
 /* Custom Scrollbars */
@@ -52,34 +51,25 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0b0f19;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
 }
 
-/* Subtle badge pulse */
-@keyframes soft-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.85; }
-}
-.animate-soft-pulse {
-  animation: soft-pulse 2s infinite ease-in-out;
-}
-
-/* Plotly overrides for clean light theme */
+/* Plotly overrides for dark theme */
 .js-plotly-plot .plotly .modebar {
   background: transparent !important;
 }
 .js-plotly-plot .plotly .modebar-btn path {
-  fill: #64748b !important;
+  fill: #94a3b8 !important;
 }
 .js-plotly-plot .plotly .modebar-btn:hover path {
-  fill: #4f46e5 !important;
+  fill: #818cf8 !important;
 }
 
 /* Print Only Helper (Hidden on Screen) */
@@ -89,9 +79,9 @@ body {
 
 /* ============================================================== */
 /* PENGATURAN CETAK PDF KHUSUS HASIL STATISTIK                    */
+/* (Selalu bersih putih saat dicetak/disimpan ke PDF)             */
 /* ============================================================== */
 @media print {
-  /* Sembunyikan elemen non-hasil (input, formulir, navigasi, tombol, alert, grafik) */
   .no-print,
   header,
   footer,
@@ -100,12 +90,10 @@ body {
     display: none !important;
   }
 
-  /* Tampilkan header dokumen cetak */
   .print-only {
     display: block !important;
   }
 
-  /* Pengaturan dasar cetak */
   body {
     background-color: #ffffff !important;
     color: #0f172a !important;
@@ -126,7 +114,6 @@ body {
     padding-top: 0 !important;
   }
 
-  /* Format kartu metrik saat dicetak */
   .stat-metric-card,
   .app-card {
     border: 1px solid #cbd5e1 !important;
@@ -135,21 +122,18 @@ body {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     background: #ffffff !important;
+    color: #0f172a !important;
     margin-bottom: 0.5rem !important;
   }
 
-  /* Reset warna background kartu untuk menghemat tinta dan kejelasan cetak */
-  .bg-indigo-50\/40,
-  .bg-emerald-50\/40,
-  .bg-rose-50\/20,
-  .bg-teal-50\/30,
-  .bg-indigo-50\/60,
-  .bg-blue-50\/60,
-  .bg-amber-50\/60 {
-    background-color: #f8fafc !important;
+  /* Reset warna teks untuk cetak kertas */
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
+    color: #0f172a !important;
+  }
+  .text-slate-400, .text-slate-500 {
+    color: #475569 !important;
   }
 
-  /* Pastikan badge angka terurut tampil rapi */
   #sorted-data-list {
     max-height: none !important;
     overflow: visible !important;

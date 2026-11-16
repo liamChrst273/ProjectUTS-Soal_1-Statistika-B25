@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stat Prototype Group 2 - Aplikasi Web Statistik Deskriptif</title>
-  <meta name="description" content="Aplikasi pengolahan data statistik deskriptif ramah pengguna dengan 14 parameter statistik, visualisasi Plotly.js, dan parser CSV.">
+  <meta name="description" content="Aplikasi pengolahan data statistik deskriptif tema gelap ramah pengguna dengan 14 parameter statistik, visualisasi Plotly.js, dan parser CSV.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -41,40 +42,40 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
 
   <!-- ============================================================== -->
-  <!-- HEADER APLIKASI YANG BERSIH & RAMAH PENGGUNA -->
+  <!-- HEADER APLIKASI TEMA GELAP BERSIH & MODERN -->
   <!-- ============================================================== -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs no-print">
+  <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-30 shadow-md backdrop-blur-md no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-600/30 ring-1 ring-white/10">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              Stat Prototype <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold">Group 2</span>
+            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              Stat Prototype <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-700/60 font-semibold tracking-wide">Group 2</span>
             </h1>
           </div>
-          <p class="text-xs text-slate-500">Aplikasi Analisis Statistik Deskriptif & Visualisasi Data</p>
+          <p class="text-xs text-slate-400">Aplikasi Analisis Statistik Deskriptif & Visualisasi Data</p>
         </div>
       </div>
 
       <!-- Action Navigasi -->
       <div class="flex items-center gap-2">
-        <button onclick="openFormulaModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-700 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button onclick="openFormulaModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
           </svg>
           <span class="hidden sm:inline">Kamus Rumus & Istilah</span>
         </button>
 
-        <a href="sample_mahasiswa.csv" download="sample_mahasiswa.csv" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="sample_mahasiswa.csv" download="sample_mahasiswa.csv" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
           </svg>
           <span class="hidden sm:inline">Unduh Contoh CSV</span>
@@ -95,25 +96,25 @@
     <!-- BAGIAN 1: INPUT DATA (LANGKAH 1 DARI 3) -->
     <!-- ============================================================== -->
     <section class="app-card rounded-2xl p-6 sm:p-7 no-print">
-      <div class="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-200 gap-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-800 gap-4">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-1.5">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-700/60 mb-1.5">
             Langkah 1
           </div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
             Pilih Sumber Data yang Ingin Dihitung
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Anda bisa mengetik angka secara langsung atau mengunggah berkas Excel/CSV.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Anda bisa mengetik angka secara langsung atau mengunggah berkas Excel/CSV.</p>
         </div>
 
         <!-- Segmented Tab Switcher -->
-        <div class="flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto">
-          <button id="tab-btn-manual" onclick="setInputTab('manual')" class="flex-1 py-2 px-4 rounded-lg font-semibold text-xs md:text-sm bg-white text-indigo-700 shadow-sm flex items-center gap-2 border border-slate-200 transition-all">
-            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <div class="flex p-1 bg-slate-950 rounded-xl border border-slate-800 self-start md:self-auto">
+          <button id="tab-btn-manual" onclick="setInputTab('manual')" class="flex-1 py-2 px-4 rounded-lg font-semibold text-xs md:text-sm bg-indigo-600 text-white shadow-md shadow-indigo-600/30 flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             Ketik Angka Sendiri
           </button>
-          <button id="tab-btn-csv" onclick="setInputTab('csv')" class="flex-1 py-2 px-4 rounded-lg font-medium text-xs md:text-sm text-slate-600 hover:text-slate-900 flex items-center gap-2 transition-all">
-            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          <button id="tab-btn-csv" onclick="setInputTab('csv')" class="flex-1 py-2 px-4 rounded-lg font-medium text-xs md:text-sm text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             Unggah Berkas CSV
           </button>
         </div>
@@ -124,65 +125,65 @@
         <!-- TAB A: INPUT MANUAL -->
         <div id="panel-input-manual" class="space-y-4">
           <div class="flex items-center justify-between">
-            <label for="manual-data-input" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <label for="manual-data-input" class="text-xs font-bold text-slate-300 uppercase tracking-wider">
               Masukkan Deret Angka Anda:
             </label>
-            <span id="manual-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold font-mono">
+            <span id="manual-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-indigo-400 border border-slate-700 font-semibold font-mono">
               0 angka terdeteksi
             </span>
           </div>
 
           <div class="relative">
             <textarea id="manual-data-input" rows="4" 
-              class="w-full bg-slate-50/70 border border-slate-300 rounded-xl p-4 text-sm font-mono text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm font-mono text-slate-100 placeholder-slate-500 focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
               placeholder="Contoh masukan: 15, 48, 52, 55, 58, 60, 61, 62, 63, 65, 66, 68, 70, 72, 75, 78, 80, 82, 85, 90, 115, 120"></textarea>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <span class="font-bold text-slate-700">💡 Tips Format Pemisah:</span>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+            <span class="font-bold text-slate-300">💡 Tips Format Pemisah:</span>
             <span>Anda bisa memisahkan angka dengan <strong>koma (,)</strong>, <strong>spasi</strong>, <strong>titik koma (;)</strong>, atau <strong>baris baru</strong>.</span>
-            <span class="text-slate-600 sm:ml-auto">Untuk pecahan desimal, gunakan tanda titik (contoh: <code>85.5</code>).</span>
+            <span class="text-slate-400 sm:ml-auto">Untuk pecahan desimal, gunakan tanda titik (contoh: <code>85.5</code>).</span>
           </div>
         </div>
 
         <!-- TAB B: UPLOAD FILE CSV -->
         <div id="panel-input-csv" class="hidden space-y-4">
           <!-- Dropzone -->
-          <div id="csv-dropzone" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 bg-slate-50 hover:bg-indigo-50/30 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all group">
+          <div id="csv-dropzone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-950/60 hover:bg-indigo-950/20 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all group">
             <input type="file" id="csv-file-input" accept=".csv,text/csv" class="hidden">
-            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-indigo-100 group-hover:bg-indigo-200 flex items-center justify-center text-indigo-600 transition-colors">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-800 group-hover:bg-indigo-600/30 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             </div>
-            <p class="text-sm font-bold text-slate-800">Klik di sini untuk memilih file CSV atau seret file ke area ini</p>
-            <p class="text-xs text-slate-500 mt-1">Sistem otomatis mendeteksi kolom angka secara pintar menggunakan PapaParse</p>
+            <p class="text-sm font-bold text-slate-200">Klik di sini untuk memilih file CSV atau seret file ke area ini</p>
+            <p class="text-xs text-slate-400 mt-1">Sistem otomatis mendeteksi kolom angka secara pintar menggunakan PapaParse</p>
           </div>
 
           <!-- File Info Pill -->
-          <div id="csv-file-info" class="hidden flex items-center justify-between p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs">
+          <div id="csv-file-info" class="hidden flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
             <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span id="csv-file-name" class="font-bold text-indigo-950 font-mono">data.csv</span>
-              <span id="csv-file-size" class="text-indigo-600"></span>
+              <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="csv-file-name" class="font-bold text-slate-200 font-mono">data.csv</span>
+              <span id="csv-file-size" class="text-slate-400"></span>
             </div>
-            <button onclick="resetAll()" class="text-rose-600 hover:text-rose-700 font-semibold">Ganti File</button>
+            <button onclick="resetAll()" class="text-rose-400 hover:text-rose-300 font-semibold">Ganti File</button>
           </div>
 
           <!-- Column Selector Dropdown -->
-          <div id="csv-column-selector-wrapper" class="hidden p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <label for="csv-column-select" class="block text-xs font-bold text-slate-700">
+          <div id="csv-column-selector-wrapper" class="hidden p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+            <label for="csv-column-select" class="block text-xs font-bold text-slate-300">
               Pilih Kolom Angka yang Ingin Dianalisis:
             </label>
             <div class="relative">
-              <select id="csv-column-select" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-xs">
+              <select id="csv-column-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none">
               </select>
             </div>
-            <p class="text-[11px] text-slate-500">Kolom yang memiliki banyak angka telah diberi tanda centang <code>(Kolom Angka ✓)</code> secara otomatis.</p>
+            <p class="text-[11px] text-slate-400">Kolom yang memiliki banyak angka telah diberi tanda centang <code>(Kolom Angka ✓)</code> secara otomatis.</p>
           </div>
 
           <!-- CSV Preview Data Table (Top 3 Rows) -->
           <div id="csv-preview-container" class="hidden space-y-2">
-            <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">Pratinjau Data CSV (3 Baris Teratas):</p>
-            <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white max-h-36 shadow-xs">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pratinjau Data CSV (3 Baris Teratas):</p>
+            <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/80 max-h-36">
               <table class="w-full text-left border-collapse text-xs">
                 <thead id="csv-preview-thead"></thead>
                 <tbody id="csv-preview-tbody"></tbody>
@@ -193,20 +194,20 @@
       </div>
 
       <!-- Action Buttons Toolbar -->
-      <div class="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+      <div class="mt-6 pt-5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-3">
-          <button onclick="processData()" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow transition-all flex items-center gap-2 transform active:scale-95">
+          <button onclick="processData()" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 transform active:scale-95">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Analisis Data Sekarang
           </button>
 
-          <button onclick="loadSampleData()" class="px-4 py-2.5 rounded-xl font-semibold text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-all flex items-center gap-2 transform active:scale-95" title="Klik ini jika ingin langsung melihat contoh tanpa mengetik">
-            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <button onclick="loadSampleData()" class="px-4 py-2.5 rounded-xl font-semibold text-sm bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-300 border border-indigo-700/50 transition-all flex items-center gap-2 transform active:scale-95" title="Klik ini jika ingin langsung melihat contoh tanpa mengetik">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             ✨ Coba Pakai Data Contoh
           </button>
         </div>
 
-        <button onclick="resetAll()" class="px-4 py-2.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 transition-all flex items-center gap-2">
+        <button onclick="resetAll()" class="px-4 py-2.5 rounded-xl font-semibold text-sm text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-750 border border-slate-700 transition-all flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Hapus / Reset
         </button>
@@ -233,28 +234,28 @@
       </div>
 
       <!-- HEADER DASHBOARD DENGAN EXPORT BUTTONS (DI LAYAR SAJA) -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-1.5 no-print">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 mb-1.5 no-print">
             Langkah 2
           </div>
-          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <h2 class="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
             Hasil Analisis 14 Parameter Statistik
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Dikelompokkan secara terstruktur agar mudah dipahami makna setiap angkanya.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Dikelompokkan secara terstruktur agar mudah dipahami makna setiap angkanya.</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 no-print">
-          <button onclick="copySummaryToClipboard()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-1.5 shadow-xs">
-            <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+          <button onclick="copySummaryToClipboard()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
             Salin Laporan
           </button>
-          <button onclick="exportSummaryCsv()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-1.5 shadow-xs">
-            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <button onclick="exportSummaryCsv()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Ekspor ke CSV
           </button>
-          <button onclick="printReport()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-1.5 shadow-xs">
-            <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <button onclick="printReport()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
             Cetak / Simpan PDF
           </button>
         </div>
@@ -263,12 +264,12 @@
       <!-- ============================================================== -->
       <!-- CARD PENJELASAN AWAM (CERITA DATA) -->
       <!-- ============================================================== -->
-      <div class="app-card rounded-2xl p-5 border-l-4 border-l-indigo-600 bg-white shadow-xs space-y-3">
+      <div class="app-card rounded-2xl p-5 border-l-4 border-l-indigo-500 bg-slate-900 shadow-md space-y-3">
         <div class="flex items-center gap-2">
           <span class="text-xl">💡</span>
           <div>
-            <h3 class="text-sm font-bold text-slate-900">Ringkasan & Kesimpulan Singkat (Bahasa Awam)</h3>
-            <p class="text-xs text-slate-500">Penjelasan otomatis maksud dari angka-angka di bawah dalam kalimat sehari-hari:</p>
+            <h3 class="text-sm font-bold text-white">Ringkasan & Kesimpulan Singkat (Bahasa Awam)</h3>
+            <p class="text-xs text-slate-400">Penjelasan otomatis maksud dari angka-angka di bawah dalam kalimat sehari-hari:</p>
           </div>
         </div>
         <div id="plain-summary-content">
@@ -281,62 +282,62 @@
       <!-- ============================================================== -->
       <div class="space-y-3">
         <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+          <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">
             Kelompok A: Nilai Rata-rata & Pusat Data
           </h3>
-          <span class="text-xs text-slate-500">(Menunjukkan di mana titik kumpul nilai Anda)</span>
+          <span class="text-xs text-slate-400">(Menunjukkan di mana titik kumpul nilai Anda)</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           <!-- KARTU 1: JUMLAH DATA (n) -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">1. Jumlah Data</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">n</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">n</span>
             </div>
-            <div id="stat-n" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-slate-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2">Banyaknya angka yang diolah</div>
+            <div id="stat-n" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-white">-</div>
+            <div class="text-[11px] text-slate-400 mt-2">Banyaknya angka yang diolah</div>
           </div>
 
           <!-- KARTU 2: TOTAL NILAI (Σx) -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">2. Total Nilai</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">Σx</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Σx</span>
             </div>
-            <div id="stat-sum" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-slate-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2">Hasil seluruh angka dijumlahkan</div>
+            <div id="stat-sum" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-white">-</div>
+            <div class="text-[11px] text-slate-400 mt-2">Hasil seluruh angka dijumlahkan</div>
           </div>
 
           <!-- KARTU 3: MEAN (RATA-RATA) -->
-          <div class="stat-metric-card bg-indigo-50/40 border-indigo-200">
-            <div class="flex items-center justify-between text-indigo-700 mb-1">
+          <div class="stat-metric-card bg-indigo-950/20 border-indigo-900/60 ring-1 ring-indigo-500/30">
+            <div class="flex items-center justify-between text-indigo-400 mb-1">
               <span class="text-xs font-bold">3. Rata-Rata (Mean)</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800">x̄</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-900/60 text-indigo-300">x̄</span>
             </div>
-            <div id="stat-mean" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-indigo-900">-</div>
-            <div class="text-[11px] text-indigo-700 mt-2">Nilai rata-rata dari total dibagi n</div>
+            <div id="stat-mean" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-indigo-200">-</div>
+            <div class="text-[11px] text-indigo-300 mt-2">Nilai rata-rata dari total dibagi n</div>
           </div>
 
           <!-- KARTU 4: MEDIAN (NILAI TENGAH) -->
-          <div class="stat-metric-card bg-emerald-50/40 border-emerald-200">
-            <div class="flex items-center justify-between text-emerald-700 mb-1">
+          <div class="stat-metric-card bg-emerald-950/20 border-emerald-900/60 ring-1 ring-emerald-500/30">
+            <div class="flex items-center justify-between text-emerald-400 mb-1">
               <span class="text-xs font-bold">4. Median (Tengah)</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Me</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-900/60 text-emerald-300">Me</span>
             </div>
-            <div id="stat-median" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-emerald-900">-</div>
-            <div class="text-[11px] text-emerald-700 mt-2">Angka persis di posisi tengah terurut</div>
+            <div id="stat-median" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-emerald-200">-</div>
+            <div class="text-[11px] text-emerald-300 mt-2">Angka persis di posisi tengah terurut</div>
           </div>
 
           <!-- KARTU 5: MODUS (SERING MUNCUL) -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">5. Modus (Sering Muncul)</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">Mo</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Mo</span>
             </div>
-            <div id="stat-mode" class="text-xl sm:text-2xl font-extrabold font-mono text-purple-700 truncate">-</div>
-            <div id="stat-mode-sub" class="text-[11px] text-slate-500 mt-2 truncate">Frekuensi kemunculan terbanyak</div>
+            <div id="stat-mode" class="text-xl sm:text-2xl font-extrabold font-mono text-purple-300 truncate">-</div>
+            <div id="stat-mode-sub" class="text-[11px] text-slate-400 mt-2 truncate">Frekuensi kemunculan terbanyak</div>
           </div>
         </div>
       </div>
@@ -346,67 +347,67 @@
       <!-- ============================================================== -->
       <div class="space-y-3">
         <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+          <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">
             Kelompok B: Sebaran, Variasi & Rentang Data
           </h3>
-          <span class="text-xs text-slate-500">(Menunjukkan seberapa bervariasi atau jauh jarak antar data Anda)</span>
+          <span class="text-xs text-slate-400">(Menunjukkan seberapa bervariasi atau jauh jarak antar data Anda)</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           <!-- KARTU 6: NILAI MINIMUM -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">6. Nilai Terkecil</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Xmin</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/60">Xmin</span>
             </div>
-            <div id="stat-min" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-sky-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2">Angka terendah dalam data</div>
+            <div id="stat-min" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-sky-200">-</div>
+            <div class="text-[11px] text-slate-400 mt-2">Angka terendah dalam data</div>
           </div>
 
           <!-- KARTU 7: NILAI MAKSIMUM -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">7. Nilai Terbesar</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">Xmax</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-purple-950 text-purple-400 border border-purple-800/60">Xmax</span>
             </div>
-            <div id="stat-max" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-purple-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2">Angka tertinggi dalam data</div>
+            <div id="stat-max" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-purple-200">-</div>
+            <div class="text-[11px] text-slate-400 mt-2">Angka tertinggi dalam data</div>
           </div>
 
           <!-- KARTU 8: RANGE (JANGKAUAN) -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">8. Jangkauan (Range)</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">R</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">R</span>
             </div>
-            <div id="stat-range" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-slate-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2">Selisih angka terbesar dikurang terkecil</div>
+            <div id="stat-range" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-white">-</div>
+            <div class="text-[11px] text-slate-400 mt-2">Selisih angka terbesar dikurang terkecil</div>
           </div>
 
           <!-- KARTU 9: VARIANS (SAMPEL & POPULASI) -->
           <div class="stat-metric-card">
-            <div class="flex items-center justify-between text-slate-500 mb-1">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-xs font-bold">9. Varians Sampel</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">s²</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/60">s²</span>
             </div>
-            <div id="stat-variance-sample" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-amber-900">-</div>
-            <div class="text-[11px] text-slate-500 mt-2 flex flex-col gap-0.5">
+            <div id="stat-variance-sample" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-amber-200">-</div>
+            <div class="text-[11px] text-slate-400 mt-2 flex flex-col gap-0.5">
               <span>Rata-rata kuadrat penyimpangan</span>
-              <span id="stat-variance-pop" class="text-[10px] font-mono text-amber-700 font-semibold">Varians Populasi: -</span>
+              <span id="stat-variance-pop" class="text-[10px] font-mono text-amber-400 font-semibold">Varians Populasi: -</span>
             </div>
           </div>
 
           <!-- KARTU 10: STANDAR DEVIASI -->
-          <div class="stat-metric-card bg-teal-50/30 border-teal-200">
-            <div class="flex items-center justify-between text-teal-800 mb-1">
+          <div class="stat-metric-card bg-teal-950/20 border-teal-900/60">
+            <div class="flex items-center justify-between text-teal-400 mb-1">
               <span class="text-xs font-bold">10. Standar Deviasi</span>
-              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-teal-100 text-teal-800">s</span>
+              <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800/60">s</span>
             </div>
-            <div id="stat-std-sample" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-teal-900">-</div>
-            <div class="text-[11px] text-teal-700 mt-2 flex flex-col gap-0.5">
+            <div id="stat-std-sample" class="text-2xl sm:text-3xl font-extrabold font-mono-numbers text-teal-200">-</div>
+            <div class="text-[11px] text-teal-300 mt-2 flex flex-col gap-0.5">
               <span>Simpangan baku dari rata-rata</span>
-              <span id="stat-std-pop" class="text-[10px] font-mono text-teal-800 font-semibold">Deviasi Populasi: -</span>
+              <span id="stat-std-pop" class="text-[10px] font-mono text-teal-400 font-semibold">Deviasi Populasi: -</span>
             </div>
           </div>
         </div>
@@ -420,8 +421,8 @@
         <!-- KELOMPOK C: PEMBAGIAN KUARTIL -->
         <div class="space-y-3">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">
               Kelompok C: Pembagian Kuartil (Posisi Data)
             </h3>
           </div>
@@ -429,32 +430,32 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <!-- KARTU 11: KUARTIL 1 -->
             <div class="stat-metric-card">
-              <div class="flex items-center justify-between text-slate-500 mb-1">
+              <div class="flex items-center justify-between text-slate-400 mb-1">
                 <span class="text-xs font-bold">11. Kuartil 1</span>
-                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">Q1</span>
+                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Q1</span>
               </div>
-              <div id="stat-q1" class="text-2xl font-extrabold font-mono-numbers text-slate-900">-</div>
-              <div class="text-[11px] text-slate-500 mt-2">Batas 25% data terbawah</div>
+              <div id="stat-q1" class="text-2xl font-extrabold font-mono-numbers text-white">-</div>
+              <div class="text-[11px] text-slate-400 mt-2">Batas 25% data terbawah</div>
             </div>
 
             <!-- KARTU 12: KUARTIL 3 -->
             <div class="stat-metric-card">
-              <div class="flex items-center justify-between text-slate-500 mb-1">
+              <div class="flex items-center justify-between text-slate-400 mb-1">
                 <span class="text-xs font-bold">12. Kuartil 3</span>
-                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">Q3</span>
+                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Q3</span>
               </div>
-              <div id="stat-q3" class="text-2xl font-extrabold font-mono-numbers text-slate-900">-</div>
-              <div class="text-[11px] text-slate-500 mt-2">Batas 75% data terbawah</div>
+              <div id="stat-q3" class="text-2xl font-extrabold font-mono-numbers text-white">-</div>
+              <div class="text-[11px] text-slate-400 mt-2">Batas 75% data terbawah</div>
             </div>
 
             <!-- KARTU 13: IQR -->
             <div class="stat-metric-card">
-              <div class="flex items-center justify-between text-slate-500 mb-1">
+              <div class="flex items-center justify-between text-slate-400 mb-1">
                 <span class="text-xs font-bold">13. Jarak Interkuartil</span>
-                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">IQR</span>
+                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">IQR</span>
               </div>
-              <div id="stat-iqr" class="text-2xl font-extrabold font-mono-numbers text-slate-900">-</div>
-              <div class="text-[11px] text-slate-500 mt-2">Rentang 50% data inti (Q3 - Q1)</div>
+              <div id="stat-iqr" class="text-2xl font-extrabold font-mono-numbers text-white">-</div>
+              <div class="text-[11px] text-slate-400 mt-2">Rentang 50% data inti (Q3 - Q1)</div>
             </div>
           </div>
         </div>
@@ -462,28 +463,28 @@
         <!-- KELOMPOK D: DETEKSI OUTLIER -->
         <div class="space-y-3">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
-            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">
               Kelompok D: Deteksi Angka Tidak Wajar (Outlier)
             </h3>
           </div>
 
-          <div class="stat-metric-card border-rose-200 bg-rose-50/20">
-            <div class="flex items-center justify-between text-rose-800 mb-2">
+          <div class="stat-metric-card border-rose-900/60 bg-rose-950/20">
+            <div class="flex items-center justify-between text-rose-400 mb-2">
               <span class="text-xs font-bold">14. Deteksi Outlier (Metode 1.5 × IQR)</span>
-              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800">Tukey Fence</span>
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">Tukey Fence</span>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-3">
-              <div class="p-2.5 rounded-xl bg-white border border-rose-200 shadow-2xs">
-                <span class="text-[11px] text-slate-500 font-semibold block">Batas Wajar Terendah:</span>
-                <div id="stat-outlier-lb" class="text-base font-bold font-mono text-slate-800 mt-0.5">-</div>
-                <span class="text-[10px] text-slate-400 font-mono">Q1 - (1.5 × IQR)</span>
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-rose-900/40">
+                <span class="text-[11px] text-slate-400 font-semibold block">Batas Wajar Terendah:</span>
+                <div id="stat-outlier-lb" class="text-base font-bold font-mono text-slate-200 mt-0.5">-</div>
+                <span class="text-[10px] text-slate-500 font-mono">Q1 - (1.5 × IQR)</span>
               </div>
-              <div class="p-2.5 rounded-xl bg-white border border-rose-200 shadow-2xs">
-                <span class="text-[11px] text-slate-500 font-semibold block">Batas Wajar Tertinggi:</span>
-                <div id="stat-outlier-ub" class="text-base font-bold font-mono text-slate-800 mt-0.5">-</div>
-                <span class="text-[10px] text-slate-400 font-mono">Q3 + (1.5 × IQR)</span>
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-rose-900/40">
+                <span class="text-[11px] text-slate-400 font-semibold block">Batas Wajar Tertinggi:</span>
+                <div id="stat-outlier-ub" class="text-base font-bold font-mono text-slate-200 mt-0.5">-</div>
+                <span class="text-[10px] text-slate-500 font-mono">Q3 + (1.5 × IQR)</span>
               </div>
             </div>
 
@@ -499,65 +500,65 @@
       <!-- BAGIAN 3: PANEL VISUALISASI INTERAKTIF (PLOTLY.JS) -->
       <!-- ============================================================== -->
       <section class="app-card rounded-2xl p-6 sm:p-7 space-y-6 no-print">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-200 gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-800 gap-4">
           <div>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-1.5">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-700/60 mb-1.5">
               Langkah 3
             </div>
-            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
               Visualisasi Grafik Interaktif
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">Pilih jenis grafik di bawah untuk melihat sebaran data secara visual.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Pilih jenis grafik di bawah untuk melihat sebaran data secara visual.</p>
           </div>
 
           <!-- Segmented Tab Visualisasi -->
-          <div class="flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-auto">
-            <button id="tab-chart-histogram" onclick="setChartTab('histogram')" class="px-4 py-2 text-xs md:text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm transition-all">
+          <div class="flex p-1 bg-slate-950 rounded-xl border border-slate-800 self-start sm:self-auto">
+            <button id="tab-chart-histogram" onclick="setChartTab('histogram')" class="px-4 py-2 text-xs md:text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-all">
               Grafik Histogram
             </button>
-            <button id="tab-chart-boxplot" onclick="setChartTab('boxplot')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all">
+            <button id="tab-chart-boxplot" onclick="setChartTab('boxplot')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
               Grafik Kotak (Boxplot)
             </button>
-            <button id="tab-chart-frequency" onclick="setChartTab('frequency')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all">
+            <button id="tab-chart-frequency" onclick="setChartTab('frequency')" class="px-4 py-2 text-xs md:text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
               Tabel & Diagram Batang
             </button>
           </div>
         </div>
 
         <!-- Controls Tambahan untuk Boxplot -->
-        <div id="boxplot-controls" class="hidden flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
-          <span class="text-slate-600 font-semibold">Ubah Arah Tampilan Grafik Boxplot:</span>
-          <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200 shadow-2xs">
+        <div id="boxplot-controls" class="hidden flex items-center justify-between bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs">
+          <span class="text-slate-400 font-semibold">Ubah Arah Tampilan Grafik Boxplot:</span>
+          <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
             <button id="btn-orient-h" onclick="setBoxplotOrientation('h')" class="px-3 py-1 text-xs font-semibold rounded-md bg-indigo-600 text-white shadow-xs">
               Mendatar (Horizontal)
             </button>
-            <button id="btn-orient-v" onclick="setBoxplotOrientation('v')" class="px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900">
+            <button id="btn-orient-v" onclick="setBoxplotOrientation('v')" class="px-3 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white">
               Tegak (Vertikal)
             </button>
           </div>
         </div>
 
         <!-- Kontainer Plotly Chart -->
-        <div id="plot-container" class="w-full h-[400px] sm:h-[450px] rounded-xl overflow-hidden bg-white border border-slate-200"></div>
+        <div id="plot-container" class="w-full h-[400px] sm:h-[450px] rounded-xl overflow-hidden bg-slate-950 border border-slate-800"></div>
 
         <!-- ============================================================== -->
         <!-- TABEL DISTRIBUSI FREKUENSI KELOMPOK (ATURAN STURGES) -->
         <!-- ============================================================== -->
-        <div id="frequency-table-wrapper" class="hidden space-y-4 pt-4 border-t border-slate-200">
+        <div id="frequency-table-wrapper" class="hidden space-y-4 pt-4 border-t border-slate-800">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               Tabel Distribusi Frekuensi Berkelompok
             </h4>
-            <span id="sturges-k-info" class="text-xs font-mono font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full">
+            <span id="sturges-k-info" class="text-xs font-mono font-semibold text-indigo-300 bg-indigo-950/60 border border-indigo-700/60 px-3 py-1 rounded-full">
               Aturan Sturges: k = - kelas
             </span>
           </div>
 
-          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-2xs">
+          <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 shadow-inner">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <tr class="bg-slate-900 text-slate-300 border-b border-slate-800">
                   <th class="py-3 px-3 text-center font-bold">No</th>
                   <th class="py-3 px-3 font-bold">Kelompok Nilai (Interval)</th>
                   <th class="py-3 px-3 font-bold">Tepi Kelas (TB - TA)</th>
@@ -568,15 +569,15 @@
                   <th class="py-3 px-3 text-center font-bold">Fk (≥)</th>
                 </tr>
               </thead>
-              <tbody id="freq-table-body" class="divide-y divide-slate-100">
+              <tbody id="freq-table-body" class="divide-y divide-slate-800/80">
                 <!-- Diisi via JavaScript -->
               </tbody>
               <tfoot>
-                <tr class="bg-slate-100 font-bold text-slate-900 border-t-2 border-indigo-500">
+                <tr class="bg-slate-900 font-bold text-white border-t-2 border-indigo-500">
                   <td colspan="4" class="py-3 px-3 text-right">TOTAL</td>
-                  <td id="freq-total-fi" class="py-3 px-3 font-mono text-center text-indigo-700 font-extrabold">-</td>
-                  <td id="freq-total-fr" class="py-3 px-3 font-mono text-center text-emerald-700 font-extrabold">100%</td>
-                  <td colspan="2" class="py-3 px-3 text-slate-500 text-center">-</td>
+                  <td id="freq-total-fi" class="py-3 px-3 font-mono text-center text-indigo-300 font-extrabold">-</td>
+                  <td id="freq-total-fr" class="py-3 px-3 font-mono text-center text-emerald-400 font-extrabold">100%</td>
+                  <td colspan="2" class="py-3 px-3 text-slate-400 text-center">-</td>
                 </tr>
               </tfoot>
             </table>
@@ -590,16 +591,16 @@
       <section class="app-card rounded-2xl p-6 sm:p-7 space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
               Urutan Angka dari Terkecil ke Terbesar (Sorted Data)
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">Membantu Anda melihat posisi angka terkecil, nilai tengah, angka terbesar, dan angka outlier.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Membantu Anda melihat posisi angka terkecil, nilai tengah, angka terbesar, dan angka outlier.</p>
           </div>
-          <span class="text-xs font-mono font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">Total: <span id="sorted-count" class="text-indigo-600 font-bold"></span></span>
+          <span class="text-xs font-mono font-semibold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg">Total: <span id="sorted-count" class="text-indigo-400 font-bold"></span></span>
         </div>
 
-        <div id="sorted-data-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+        <div id="sorted-data-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3.5 rounded-xl bg-slate-950 border border-slate-800">
           <!-- Diisi via JavaScript -->
         </div>
       </section>
@@ -615,44 +616,44 @@
   <!-- ============================================================== -->
   <!-- MODAL PANDUAN RUMUS STATISTIK -->
   <!-- ============================================================== -->
-  <div id="formula-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 no-print">
-    <div class="bg-white w-full max-w-2xl max-h-[85vh] rounded-2xl border border-slate-200 shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+  <div id="formula-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-slate-900 w-full max-w-2xl max-h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Kamus Rumus & Istilah Statistik (Bahasa Mudah)
         </h3>
-        <button onclick="closeFormulaModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <button onclick="closeFormulaModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
-        <div class="p-4 rounded-xl bg-indigo-50/60 border border-indigo-100 space-y-1.5">
-          <h4 class="font-bold text-indigo-900 text-sm">1. Nilai Pemusatan Data</h4>
-          <p>• <b>Mean (Rata-rata):</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-indigo-800">x̄ = Σx / n</code>. Hasil penjumlahan semua nilai dibagi banyaknya angka.</p>
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-300 leading-relaxed">
+        <div class="p-4 rounded-xl bg-indigo-950/40 border border-indigo-800/50 space-y-1.5">
+          <h4 class="font-bold text-indigo-300 text-sm">1. Nilai Pemusatan Data</h4>
+          <p>• <b>Mean (Rata-rata):</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-indigo-300">x̄ = Σx / n</code>. Hasil penjumlahan semua nilai dibagi banyaknya angka.</p>
           <p>• <b>Median (Nilai Tengah):</b> Angka yang berada tepat di tengah setelah data diurutkan dari kecil ke besar.</p>
           <p>• <b>Modus:</b> Angka yang jumlah kemunculannya paling banyak di antara angka lainnya.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-100 space-y-1.5">
-          <h4 class="font-bold text-amber-900 text-sm">2. Sebaran & Keragaman Data</h4>
-          <p>• <b>Jangkauan (Range):</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-amber-800">Xmax - Xmin</code>. Jarak antara angka terbesar dan angka terkecil.</p>
-          <p>• <b>Varians Sampel (s²):</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-amber-800">Σ(xi - x̄)² / (n - 1)</code>. Mengukur seberapa lebar data menyebar dari nilai rata-rata.</p>
+        <div class="p-4 rounded-xl bg-amber-950/40 border border-amber-800/50 space-y-1.5">
+          <h4 class="font-bold text-amber-300 text-sm">2. Sebaran & Keragaman Data</h4>
+          <p>• <b>Jangkauan (Range):</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-amber-300">Xmax - Xmin</code>. Jarak antara angka terbesar dan angka terkecil.</p>
+          <p>• <b>Varians Sampel (s²):</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-amber-300">Σ(xi - x̄)² / (n - 1)</code>. Mengukur seberapa lebar data menyebar dari nilai rata-rata.</p>
           <p>• <b>Standar Deviasi (s):</b> Akar kuadrat dari varians. Merupakan jarak rata-rata simpangan data ke nilai mean dalam satuan aslinya.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-1.5">
-          <h4 class="font-bold text-emerald-900 text-sm">3. Kuartil & Deteksi Outlier (Metode Tukey 1.5 × IQR)</h4>
+        <div class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/50 space-y-1.5">
+          <h4 class="font-bold text-emerald-300 text-sm">3. Kuartil & Deteksi Outlier (Metode Tukey 1.5 × IQR)</h4>
           <p>• <b>Kuartil 1 (Q1) & Kuartil 3 (Q3):</b> Batas 25% data terendah dan 75% data terendah.</p>
-          <p>• <b>IQR (Interquartile Range):</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-emerald-800">Q3 - Q1</code>. Jarak bentang 50% data di bagian tengah.</p>
-          <p>• <b>Batas Bawah Outlier:</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-rose-700">Q1 - (1.5 × IQR)</code>. Angka lebih kecil dari ini dianggap terlalu ekstrem ke bawah.</p>
-          <p>• <b>Batas Atas Outlier:</b> <code class="font-mono bg-white px-1.5 py-0.5 rounded border text-rose-700">Q3 + (1.5 × IQR)</code>. Angka lebih besar dari ini dianggap terlalu ekstrem ke atas.</p>
+          <p>• <b>IQR (Interquartile Range):</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-emerald-300">Q3 - Q1</code>. Jarak bentang 50% data di bagian tengah.</p>
+          <p>• <b>Batas Bawah Outlier:</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-rose-300">Q1 - (1.5 × IQR)</code>. Angka lebih kecil dari ini dianggap terlalu ekstrem ke bawah.</p>
+          <p>• <b>Batas Atas Outlier:</b> <code class="font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-rose-300">Q3 + (1.5 × IQR)</code>. Angka lebih besar dari ini dianggap terlalu ekstrem ke atas.</p>
         </div>
       </div>
 
-      <div class="p-4 border-t border-slate-200 bg-slate-50 text-right">
-        <button onclick="closeFormulaModal()" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition">
+      <div class="p-4 border-t border-slate-800 bg-slate-950 text-right">
+        <button onclick="closeFormulaModal()" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition">
           Saya Mengerti
         </button>
       </div>
@@ -662,10 +663,10 @@
   <!-- ============================================================== -->
   <!-- FOOTER -->
   <!-- ============================================================== -->
-  <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 no-print">
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500 no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
       <p>© 2026 Stat Prototype Group 2. Dirancang agar mudah dipelajari dan dipresentasikan.</p>
-      <div class="flex items-center gap-3 text-slate-500 font-medium">
+      <div class="flex items-center gap-3 text-slate-400 font-medium">
         <span>HTML5</span> • <span>Tailwind CSS</span> • <span>Plotly.js</span> • <span>PapaParse</span>
       </div>
     </div>
